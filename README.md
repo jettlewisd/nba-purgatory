@@ -1,5 +1,5 @@
-# Vue 3 + Vite
+# NBA Purgatory 🏀🔥
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+A chaotic, satirical clicker game simulating the highs, lows, and overpriced snacks of attending an NBA playoff game.
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+Built with: Vue 3 + Vite + Pinia + Tailwind CSS
