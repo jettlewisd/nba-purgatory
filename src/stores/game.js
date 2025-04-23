@@ -27,5 +27,11 @@ export const useGameStore = defineStore('game', {
         updateScoreGap(diff) {
             this.scoreGap += diff
         },
+        advanceQuarter() {
+            this.quarter++
+        },
+        updateScoreGap(amount) {
+            this.scoreGap += amount
+        },
     }
 })

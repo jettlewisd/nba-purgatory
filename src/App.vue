@@ -8,6 +8,7 @@
     <header class="p-4 text-center">
         <!-- TODO: Add scores / stats here -->
       <h1 class="text-2xl font-bold">Hype Level: {{ game.hype }}</h1>
+      <h2 class="text-2xl font-bold">Money: {{ game.money }}</h2>
     </header>
 
 
@@ -20,6 +21,12 @@
             @click="game.increaseHype(10)"
         >
           Hype Me Up!
+        </button>
+        <button
+          class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition"
+          @click="game.spendMoney(5)"
+        >
+          Spend Money
         </button>
     </main>
 
@@ -41,8 +48,14 @@
 
 <script setup>
 import { useGameStore } from './stores/game';
+import { onMounted, onUnmounted } from 'vue';
 
 const game = useGameStore();
+
+
+
+
+
 </script>
 
 
