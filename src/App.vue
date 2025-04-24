@@ -9,6 +9,11 @@
       <h2 class="text-2xl font-bold">Hype Level: {{ game.hype }}</h2>
       <h2 class="text-xl">Regret: {{ game.regret }}</h2>
 
+      <h2 :class="['text-xl font-bold', scoreClass]">
+        {{ scoreStatus }}
+      </h2>
+
+
       <!-- 🚨 Special event message (Luka trade) -->
       <h3 class="text-md text-red-400" v-if="game.lukaTraded">
         Luka traded at halftime! Riots ensue across Texas and your regret increases.
@@ -82,9 +87,23 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useGameStore } from './stores/game'
+import { computed } from 'vue'
 
 const game = useGameStore()
 const showChantOverlay = ref(false)
+
+const scoreStatus = computed(() => {
+  if (game.scoreGap > 0) return `Winning by: ${Math.abs(game.scoreGap)}`
+  if (game.scoreGap < 0) return `Losing by: ${Math.abs(game.scoreGap)}`
+  return 'Tied Game'
+})
+
+const scoreClass = computed(() => {
+  if (game.scoreGap > 0) return 'text-green-400'
+  if (game.scoreGap < 0) return 'text-red-400'
+  return 'text-yellow-300'
+})
+
 
 onMounted(() => {
   const interval = setInterval(() => {
