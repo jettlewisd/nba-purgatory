@@ -1,102 +1,118 @@
+<template>
+  <div class="flex flex-col justify-between h-screen w-screen bg-neutral-900 text-white">
 
-
-
-<template> 
-   <div class="flex flex-col justify-between h-screen w-screen bg-neutral-900 text-white">
-
-        <!-- TOP: GAME INFO (score, hype, etc)-->
+    <!-- 🏀 TOP: Game Stats -->
     <header class="p-4 text-center">
-        <!-- TODO: Add scores / stats here -->
       <h2 class="text-2xl font-bold">Quarter: {{ game.quarter }}</h2>
-      <h2 class="text-xl">Time: {{ game.time }}sec</h2>
+      <h2 class="text-xl">Time: {{ game.time }} sec</h2>
       <h2 class="text-2xl font-bold">Money: {{ game.money }}</h2>
       <h2 class="text-2xl font-bold">Hype Level: {{ game.hype }}</h2>
       <h2 class="text-xl">Regret: {{ game.regret }}</h2>
-      
+
+      <!-- 🚨 Special event message (Luka trade) -->
       <h3 class="text-md text-red-400" v-if="game.lukaTraded">
         Luka traded at halftime! Riots ensue across Texas and your regret increases.
       </h3>
-      
-     
     </header>
 
-
-
-        <!-- MIDDLE: Court area (bouncing faces / buttons go here)-->
+    <!-- 🏟️ MIDDLE: Court Area with floating actions + buttons -->
     <main class="flex-1 flex items-center justify-center relative">
-        <!-- TODO: Add court bg and floating components  **(TEST BUTTON RN)-->
-        <button
-            class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition"
-            @click="game.increaseHype(10)"
-        >
-          Hype Me Up!
-        </button>
-        <button
-          class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition"
-          @click="game.spendMoney(5)"
-        >
-          Spend Money
-        </button>
+
+      <!-- 🔥 Chant Overlay Message -->
+      <div v-if="showChantOverlay"
+        class="absolute top-10 left-1/2 transform -translate-x-1/2 bg-red-700 text-white px-6 py-3 rounded shadow-lg text-xl font-bold animate-bounce z-50">
+        🔥 FIRE NICO!! The crowd is losing it!
+      </div>
+
+      <!-- 🎯 Core Interaction Buttons -->
+      <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition m-2"
+        @click="game.increaseHype(10)">
+        Hype Me Up!
+      </button>
+
+      <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition m-2"
+        @click="game.spendMoney(5)">
+        Spend Money
+      </button>
+
+      <!-- 🔊 Available in Q3+ -->
+      <button v-if="game.quarter >= 3"
+        class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded transition m-2" @click="
+          game.increaseHype(15);
+        showChantOverlay = true;
+        setTimeout(() => showChantOverlay = false, 2000);
+        ">
+        Chant "FIRE NICO"
+      </button>
+
+      <!-- 📸 Take Selfie: Regret Relief -->
+      <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition m-2"
+        @click="game.decreaseRegret(10)">
+        Take Selfie 📸
+      </button>
+
+      <!-- 🌭 Hot Dog: Slightly Regretful Purchase -->
+      <button class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded transition m-2" @click="
+        game.spendMoney(10);
+      game.decreaseHype(5);
+      game.addRegret(2);
+      ">
+        Buy Hot Dog 🌭
+      </button>
+
+      <!-- 👕 Luka Jersey (Q1+Q2 only): Hype Boost + Regret Relief -->
+      <button v-if="game.quarter < 3"
+        class="bg-purple-700 hover:bg-purple-800 text-white font-bold py-2 px-4 rounded transition m-2" @click="
+          game.spendMoney(20);
+        game.decreaseRegret(20);
+        game.increaseHype(5);
+        ">
+        Buy Luka Jersey 💔
+      </button>
     </main>
 
-
-        
-    
-    <!-- Bottom: Empty for now (we’ll remove or repurpose later) -->
+    <!-- 🪑 BOTTOM: Reserved for future use -->
     <footer class="p-4 text-center">
-        <!-- optional test area -->
+      <!-- Optional debug/stats area -->
     </footer>
 
   </div>
 </template>
 
-
-
-
-
-
 <script setup>
-import { useGameStore } from './stores/game';
-import { onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue'
+import { useGameStore } from './stores/game'
 
-const game = useGameStore();
+const game = useGameStore()
+const showChantOverlay = ref(false)
 
 onMounted(() => {
   const interval = setInterval(() => {
-    // 1️⃣ increase time
+    // ⏱️ Tick game time
     game.time++
 
-    // 2️⃣ advance quarter every 60 seconds
-    if (game.time % 60 === 0 && game.quarter < 4) {
+    // ⏩ Advance quarter every 15 seconds
+    if (game.time % 15 === 0 && game.quarter < 4) {
       game.advanceQuarter()
       console.log(`Quarter ${game.quarter}`)
-      // ⛔ you could trigger a sound/alert here later
     }
 
-    // 3️⃣ update scoreGap based on hype
+    // 📊 ScoreGap reflects hype
     if (game.hype > 50) {
       game.updateScoreGap(1)
     } else if (game.hype < 50) {
       game.updateScoreGap(-1)
     }
 
-    // 4️⃣ Luka Trade at Halftime (start of Q3)
+    // 💔 Trigger Luka Trade once at Q3
     if (game.quarter === 3 && !game.lukaTraded) {
-    game.lukaTraded = true
-    game.addRegret(20)
-    console.log('Luka traded at halftime! Riots ensue across Texas.')
-    // TODO: show sad popup or animation here later
+      game.lukaTraded = true
+      game.addRegret(20)
+      console.log('Luka traded at halftime! Riots ensue across Texas.')
     }
-
   }, 1000)
 
+  // 🧹 Cleanup on unmount
   onUnmounted(() => clearInterval(interval))
 })
-
-
-
-
-
 </script>
-
-
