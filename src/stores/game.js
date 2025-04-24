@@ -9,6 +9,7 @@ export const useGameStore = defineStore('game', {
         quarter: 1,
         time: 0,
         isEjected: false,
+        lukaTraded: false,
     }),
 
     actions: {
@@ -24,14 +25,15 @@ export const useGameStore = defineStore('game', {
         spendMoney(amount) {
             this.money = Math.max(0, this.money - amount)
         },
-        updateScoreGap(diff) {
-            this.scoreGap += diff
-        },
         advanceQuarter() {
             this.quarter++
         },
         updateScoreGap(amount) {
             this.scoreGap += amount
         },
+        decreaseRegret(amount) {
+            this.regret = Math.max(0, this.regret - amount)
+        },
+          
     }
 })
