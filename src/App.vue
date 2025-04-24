@@ -1,7 +1,8 @@
 <template>
-  <div class="flex flex-col justify-between h-screen w-screen text-white bg-cover bg-center bg-no-repeat"
+  <div class="relative flex flex-col justify-between h-screen w-screen text-white bg-cover bg-center bg-no-repeat"
     :style="{ backgroundImage: `url(${courtBg})` }">
-
+    <!-- 🏀 Floating Basketball -->
+    <img :src="ball" alt="Floating Ball" class="w-[40px] h-[40px] object-contain z-10 animate-bounce-dvd" />
 
     <!-- 🏀 TOP: Game Stats -->
     <header class="p-4 text-center">
@@ -15,23 +16,18 @@
         {{ scoreStatus }}
       </h2>
 
-
-      <!-- 🚨 Special event message (Luka trade) -->
       <h3 class="text-md text-red-400" v-if="game.lukaTraded">
         Luka traded at halftime! Riots ensue across Texas and your regret increases.
       </h3>
     </header>
 
     <!-- 🏟️ MIDDLE: Court Area with floating actions + buttons -->
-    <main class="flex-1 flex items-center justify-center relative">
-
-      <!-- 🔥 Chant Overlay Message -->
+    <main class="relative w-full h-auto flex items-center justify-center overflow-hidden">
       <div v-if="showChantOverlay"
         class="absolute top-10 left-1/2 transform -translate-x-1/2 bg-red-700 text-white px-6 py-3 rounded shadow-lg text-xl font-bold animate-bounce z-50">
         🔥 FIRE NICO!! The crowd is losing it!
       </div>
 
-      <!-- 🎯 Core Interaction Buttons -->
       <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition m-2"
         @click="game.increaseHype(10)">
         Hype Me Up!
@@ -42,7 +38,6 @@
         Spend Money
       </button>
 
-      <!-- 🔊 Available in Q3+ -->
       <button v-if="game.quarter >= 3"
         class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded transition m-2" @click="
           game.increaseHype(15);
@@ -52,13 +47,11 @@
         Chant "FIRE NICO"
       </button>
 
-      <!-- 📸 Take Selfie: Regret Relief -->
       <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition m-2"
         @click="game.decreaseRegret(10)">
         Take Selfie 📸
       </button>
 
-      <!-- 🌭 Hot Dog: Slightly Regretful Purchase -->
       <button class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded transition m-2" @click="
         game.spendMoney(10);
       game.decreaseHype(5);
@@ -67,7 +60,6 @@
         Buy Hot Dog 🌭
       </button>
 
-      <!-- 👕 Luka Jersey (Q1+Q2 only): Hype Boost + Regret Relief -->
       <button v-if="game.quarter < 3"
         class="bg-purple-700 hover:bg-purple-800 text-white font-bold py-2 px-4 rounded transition m-2" @click="
           game.spendMoney(20);
@@ -78,11 +70,9 @@
       </button>
     </main>
 
-    <!-- 🪑 BOTTOM: Reserved for future use -->
     <footer class="p-4 text-center">
       <!-- Optional debug/stats area -->
     </footer>
-
   </div>
 </template>
 
@@ -91,8 +81,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useGameStore } from './stores/game'
 import { computed } from 'vue'
 import courtBg from './assets/images/court-bg.png'
-import ball from './assets/images/bball.png';
-
+import ball from './assets/images/bball.png'
 
 const game = useGameStore()
 const showChantOverlay = ref(false)
@@ -109,26 +98,21 @@ const scoreClass = computed(() => {
   return 'text-yellow-300'
 })
 
-
 onMounted(() => {
   const interval = setInterval(() => {
-    // ⏱️ Tick game time
     game.time++
 
-    // ⏩ Advance quarter every 15 seconds
     if (game.time % 15 === 0 && game.quarter < 4) {
       game.advanceQuarter()
       console.log(`Quarter ${game.quarter}`)
     }
 
-    // 📊 ScoreGap reflects hype
     if (game.hype > 50) {
       game.updateScoreGap(1)
     } else if (game.hype < 50) {
       game.updateScoreGap(-1)
     }
 
-    // 💔 Trigger Luka Trade once at Q3
     if (game.quarter === 3 && !game.lukaTraded) {
       game.lukaTraded = true
       game.addRegret(20)
@@ -136,7 +120,71 @@ onMounted(() => {
     }
   }, 1000)
 
-  // 🧹 Cleanup on unmount
   onUnmounted(() => clearInterval(interval))
 })
 </script>
+
+<style scoped>
+@keyframes floating {
+  0% {
+    transform: translate(0, 0);
+  }
+
+  25% {
+    transform: translate(20px, -15px);
+  }
+
+  50% {
+    transform: translate(-10px, 10px);
+  }
+
+  75% {
+    transform: translate(15px, -5px);
+  }
+
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+.animate-floating {
+  animation: floating 5s ease-in-out infinite;
+}
+
+@keyframes bounce-chaotic {
+  0% {
+    top: 20vh;
+    left: 10vw;
+  }
+
+  20% {
+    top: 30vh;
+    left: 85vw;
+  }
+
+  40% {
+    top: 75vh;
+    left: 50vw;
+  }
+
+  60% {
+    top: 35vh;
+    left: 20vw;
+  }
+
+  80% {
+    top: 65vh;
+    left: 90vw;
+  }
+
+  100% {
+    top: 20vh;
+    left: 10vw;
+  }
+}
+
+.animate-bounce-dvd {
+  animation: bounce-chaotic 11s linear infinite;
+  position: absolute;
+}
+</style>
