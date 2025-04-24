@@ -1,5 +1,7 @@
 <template>
-  <div class="flex flex-col justify-between h-screen w-screen bg-neutral-900 text-white">
+  <div class="flex flex-col justify-between h-screen w-screen text-white bg-cover bg-center bg-no-repeat"
+    :style="{ backgroundImage: `url(${courtBg})` }">
+
 
     <!-- 🏀 TOP: Game Stats -->
     <header class="p-4 text-center">
@@ -88,6 +90,9 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useGameStore } from './stores/game'
 import { computed } from 'vue'
+import courtBg from './assets/images/court-bg.png'
+import ball from './assets/images/bball.png';
+
 
 const game = useGameStore()
 const showChantOverlay = ref(false)
