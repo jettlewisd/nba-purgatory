@@ -2,7 +2,18 @@
   <div class="relative flex flex-col justify-between h-screen w-screen text-white bg-cover bg-center bg-no-repeat"
     :style="{ backgroundImage: `url(${courtBg})` }">
     <!-- 🏀 Floating Basketball -->
-    <img :src="ball" alt="Floating Ball" class="w-[40px] h-[40px] object-contain z-10 animate-bounce-dvd" />
+    <img :src="bball" alt="Floating Ball" class="w-[40px] h-[40px] object-contain z-10 animate-bounce-dvd" />
+    <img :src="shai" alt="Shai" class="player-face object-contain z-10 animate-chaotic-1" />
+    <img :src="luka" alt="Luka" class="player-face object-contain z-10 animate-chaotic-2" />
+    <img :src="durant" alt="Durant" class="player-face object-contain z-10 animate-chaotic-3" />
+    <img :src="ja" alt="Ja" class="player-face object-contain z-10 animate-chaotic-4" />
+    <img :src="caruso" alt="Caruso" class="player-face object-contain z-10 animate-chaotic-5" />
+    <img :src="jokic" alt="Jokic" class="player-face object-contain z-10 animate-chaotic-6" />
+    <img :src="steph" alt="Steph" class="player-face object-contain z-10 animate-chaotic-7" />
+    <img :src="lebrugh" alt="Lebrugh" class="player-face object-contain z-10 animate-chaotic-8" />
+    <img :src="russ" alt="Russ" class="player-face object-contain z-10 animate-chaotic-9" />
+    <img :src="jimmy" alt="Jimmy" class="player-face object-contain z-10 animate-chaotic-10" />
+
 
     <!-- 🏀 TOP: Game Stats -->
     <header class="p-4 text-center">
@@ -92,13 +103,23 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useGameStore } from './stores/game'
 import { computed } from 'vue'
 import courtBg from './assets/images/court-bg.png'
-import ball from './assets/images/bball.png'
+import bball from './assets/images/bball.png'
 import clippy from './assets/images/courtside/clippy.png'
 import drake from './assets/images/courtside/drake.png'
 import riri from './assets/images/courtside/riri.png'
 import mister from './assets/images/courtside/mister.png'
 import sandler from './assets/images/courtside/sandler.png'
 import me from './assets/images/courtside/me.png'
+import shai from './assets/images/players/shai.png'
+import luka from './assets/images/players/luka.png'
+import durant from './assets/images/players/durant.png'
+import ja from './assets/images/players/ja.png'
+import caruso from './assets/images/players/caruso.png'
+import jokic from './assets/images/players/jokic.png'
+import steph from './assets/images/players/steph.png'
+import lebrugh from './assets/images/players/lebrugh.png'
+import russ from './assets/images/players/russ.png'
+import jimmy from './assets/images/players/jimmy.png'
 
 const game = useGameStore()
 const showChantOverlay = ref(false)
@@ -140,6 +161,8 @@ onMounted(() => {
   onUnmounted(() => clearInterval(interval))
 })
 </script>
+
+
 
 <style scoped>
 @keyframes floating {
@@ -220,5 +243,334 @@ onMounted(() => {
 .animate-bounce-dvd {
   animation: bounce-chaotic 11s linear infinite;
   position: absolute;
+}
+
+@keyframes bounce-chaotic-1 {
+  0% {
+    top: 10vh;
+    left: 5vw;
+  }
+
+  25% {
+    top: 20vh;
+    left: 80vw;
+  }
+
+  50% {
+    top: 75vh;
+    left: 50vw;
+  }
+
+  75% {
+    top: 30vh;
+    left: 15vw;
+  }
+
+  100% {
+    top: 10vh;
+    left: 5vw;
+  }
+}
+
+@keyframes bounce-chaotic-2 {
+  0% {
+    top: 15vh;
+    left: 20vw;
+  }
+
+  25% {
+    top: 35vh;
+    left: 70vw;
+  }
+
+  50% {
+    top: 60vh;
+    left: 30vw;
+  }
+
+  75% {
+    top: 25vh;
+    left: 90vw;
+  }
+
+  100% {
+    top: 15vh;
+    left: 20vw;
+  }
+}
+
+@keyframes bounce-chaotic-3 {
+  0% {
+    top: 5vh;
+    left: 10vw;
+  }
+
+  25% {
+    top: 60vh;
+    left: 75vw;
+  }
+
+  50% {
+    top: 85vh;
+    left: 40vw;
+  }
+
+  75% {
+    top: 30vh;
+    left: 20vw;
+  }
+
+  100% {
+    top: 5vh;
+    left: 10vw;
+  }
+}
+
+@keyframes bounce-chaotic-4 {
+  0% {
+    top: 18vh;
+    left: 12vw;
+  }
+
+  25% {
+    top: 50vh;
+    left: 85vw;
+  }
+
+  50% {
+    top: 65vh;
+    left: 25vw;
+  }
+
+  75% {
+    top: 40vh;
+    left: 5vw;
+  }
+
+  100% {
+    top: 18vh;
+    left: 12vw;
+  }
+}
+
+@keyframes bounce-chaotic-5 {
+  0% {
+    top: 8vh;
+    left: 15vw;
+  }
+
+  25% {
+    top: 70vh;
+    left: 60vw;
+  }
+
+  50% {
+    top: 60vh;
+    left: 10vw;
+  }
+
+  75% {
+    top: 20vh;
+    left: 90vw;
+  }
+
+  100% {
+    top: 8vh;
+    left: 15vw;
+  }
+}
+
+@keyframes bounce-chaotic-6 {
+  0% {
+    top: 12vh;
+    left: 25vw;
+  }
+
+  25% {
+    top: 65vh;
+    left: 15vw;
+  }
+
+  50% {
+    top: 45vh;
+    left: 80vw;
+  }
+
+  75% {
+    top: 10vh;
+    left: 40vw;
+  }
+
+  100% {
+    top: 12vh;
+    left: 25vw;
+  }
+}
+
+@keyframes bounce-chaotic-7 {
+  0% {
+    top: 3vh;
+    left: 30vw;
+  }
+
+  25% {
+    top: 45vh;
+    left: 70vw;
+  }
+
+  50% {
+    top: 70vh;
+    left: 50vw;
+  }
+
+  75% {
+    top: 25vh;
+    left: 10vw;
+  }
+
+  100% {
+    top: 3vh;
+    left: 30vw;
+  }
+}
+
+@keyframes bounce-chaotic-8 {
+  0% {
+    top: 6vh;
+    left: 5vw;
+  }
+
+  25% {
+    top: 60vh;
+    left: 30vw;
+  }
+
+  50% {
+    top: 78vh;
+    left: 90vw;
+  }
+
+  75% {
+    top: 20vh;
+    left: 60vw;
+  }
+
+  100% {
+    top: 6vh;
+    left: 5vw;
+  }
+}
+
+@keyframes bounce-chaotic-9 {
+  0% {
+    top: 20vh;
+    left: 40vw;
+  }
+
+  25% {
+    top: 75vh;
+    left: 20vw;
+  }
+
+  50% {
+    top: 50vh;
+    left: 70vw;
+  }
+
+  75% {
+    top: 35vh;
+    left: 10vw;
+  }
+
+  100% {
+    top: 20vh;
+    left: 40vw;
+  }
+}
+
+@keyframes bounce-chaotic-10 {
+  0% {
+    top: 14vh;
+    left: 35vw;
+  }
+
+  25% {
+    top: 60vh;
+    left: 85vw;
+  }
+
+  50% {
+    top: 80vh;
+    left: 45vw;
+  }
+
+  75% {
+    top: 25vh;
+    left: 5vw;
+  }
+
+  100% {
+    top: 14vh;
+    left: 35vw;
+  }
+}
+
+/* Matching utility classes */
+.animate-chaotic-1 {
+  animation: bounce-chaotic-1 12s linear infinite;
+  position: absolute;
+}
+
+.animate-chaotic-2 {
+  animation: bounce-chaotic-2 175s linear infinite;
+  position: absolute;
+}
+
+.animate-chaotic-3 {
+  animation: bounce-chaotic-3 12s linear infinite;
+  position: absolute;
+}
+
+.animate-chaotic-4 {
+  animation: bounce-chaotic-4 12s linear infinite;
+  position: absolute;
+}
+
+.animate-chaotic-5 {
+  animation: bounce-chaotic-5 175s linear infinite;
+  position: absolute;
+}
+
+.animate-chaotic-6 {
+  animation: bounce-chaotic-6 175s linear infinite;
+  position: absolute;
+}
+
+.animate-chaotic-7 {
+  animation: bounce-chaotic-7 12s linear infinite;
+  position: absolute;
+}
+
+.animate-chaotic-8 {
+  animation: bounce-chaotic-8 12s linear infinite;
+  position: absolute;
+}
+
+.animate-chaotic-9 {
+  animation: bounce-chaotic-9 2s linear infinite;
+  position: absolute;
+}
+
+.animate-chaotic-10 {
+  animation: bounce-chaotic-10 12s linear infinite;
+  position: absolute;
+}
+
+.player-face {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  position: absolute;
+  z-index: 10;
 }
 </style>
