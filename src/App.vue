@@ -70,6 +70,18 @@
       </button>
     </main>
 
+    <!-- 👑 Courtside Celebs -->
+    <div class="relative absolute bottom-[8%] left-1/2 transform -translate-x-1/2 flex gap-4 z-30 w-[220px]">
+      <img :src="drake" alt="Drake" class="w-[57px] h-auto object-contain animate-bounce-gently" />
+      <img :src="riri" alt="Rihanna" class="w-[89px] h-auto object-contain animate-bounce-gently" />
+      <img :src="clippy" alt="Clippy" class="w-[80px] h-auto object-contain animate-bounce-gently" />
+      <img :src="mister" alt="Mister" class="w-[35px] h-auto object-contain animate-bounce-gently" />
+      <img :src="sandler" alt="Sandler" class="w-[47px] h-auto object-contain animate-bounce-gently" />
+      <img :src="me" alt="Me" class="w-[85px] h-auto object-contain animate-bounce-gently" />
+    </div>
+
+
+
     <footer class="p-4 text-center">
       <!-- Optional debug/stats area -->
     </footer>
@@ -82,6 +94,12 @@ import { useGameStore } from './stores/game'
 import { computed } from 'vue'
 import courtBg from './assets/images/court-bg.png'
 import ball from './assets/images/bball.png'
+import clippy from './assets/images/courtside/clippy.png'
+import drake from './assets/images/courtside/drake.png'
+import riri from './assets/images/courtside/riri.png'
+import mister from './assets/images/courtside/mister.png'
+import sandler from './assets/images/courtside/sandler.png'
+import me from './assets/images/courtside/me.png'
 
 const game = useGameStore()
 const showChantOverlay = ref(false)
@@ -182,6 +200,23 @@ onMounted(() => {
     left: 10vw;
   }
 }
+
+@keyframes bounce-gently {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-bounce-gently {
+  animation: bounce-gently 2s ease-in-out infinite;
+}
+
 
 .animate-bounce-dvd {
   animation: bounce-chaotic 11s linear infinite;
