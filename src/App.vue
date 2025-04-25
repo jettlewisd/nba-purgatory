@@ -1,21 +1,13 @@
 <template>
   <div class="relative flex flex-col justify-between h-screen w-screen text-white bg-cover bg-center bg-no-repeat"
     :style="{ backgroundImage: `url(${courtBg})` }">
-    <!-- 🏀 Floating Basketball -->
+
+    <!-- Floating Ball + Players -->
     <img :src="bball" alt="Floating Ball" class="w-[40px] h-[40px] object-contain z-10 animate-bounce-dvd" />
-    <img :src="shai" alt="Shai" class="player-face object-contain z-10 animate-chaotic-1" />
-    <img :src="luka" alt="Luka" class="player-face object-contain z-10 animate-chaotic-2" />
-    <img :src="durant" alt="Durant" class="player-face object-contain z-10 animate-chaotic-3" />
-    <img :src="ja" alt="Ja" class="player-face object-contain z-10 animate-chaotic-4" />
-    <img :src="caruso" alt="Caruso" class="player-face object-contain z-10 animate-chaotic-5" />
-    <img :src="jokic" alt="Jokic" class="player-face object-contain z-10 animate-chaotic-6" />
-    <img :src="steph" alt="Steph" class="player-face object-contain z-10 animate-chaotic-7" />
-    <img :src="lebrugh" alt="Lebrugh" class="player-face object-contain z-10 animate-chaotic-8" />
-    <img :src="russ" alt="Russ" class="player-face object-contain z-10 animate-chaotic-9" />
-    <img :src="jimmy" alt="Jimmy" class="player-face object-contain z-10 animate-chaotic-10" />
+    <img v-for="(player, idx) in players" :key="idx" :src="player.src" :alt="player.name" :class="player.class"
+      class="player-face" />
 
-
-    <!-- 🏀 TOP: Game Stats -->
+    <!-- 🏀 Header -->
     <header class="p-4 text-center">
       <h2 class="text-2xl font-bold">Quarter: {{ game.quarter }}</h2>
       <h2 class="text-xl">Time: {{ game.time }} sec</h2>
@@ -27,58 +19,25 @@
         {{ scoreStatus }}
       </h2>
 
-      <h3 class="text-md text-red-400" v-if="game.lukaTraded">
+      <h3 v-if="game.lukaTraded" class="text-md text-red-400">
         Luka traded at halftime! Riots ensue across Texas and your regret increases.
       </h3>
     </header>
 
-    <!-- 🏟️ MIDDLE: Court Area with floating actions + buttons -->
-    <main class="relative w-full h-auto flex items-center justify-center overflow-hidden">
+    <!-- 🏟️ Court (Floating Buttons) -->
+    <main class="relative w-full h-full overflow-hidden">
       <div v-if="showChantOverlay"
         class="absolute top-10 left-1/2 transform -translate-x-1/2 bg-red-700 text-white px-6 py-3 rounded shadow-lg text-xl font-bold animate-bounce z-50">
         🔥 FIRE NICO!! The crowd is losing it!
       </div>
 
-      <button class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition m-2"
-        @click="game.increaseHype(10)">
-        Hype Me Up!
-      </button>
-
-      <button class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition m-2"
-        @click="game.spendMoney(5)">
-        Spend Money
-      </button>
-
-      <button v-if="game.quarter >= 3"
-        class="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-2 px-4 rounded transition m-2" @click="
-          game.increaseHype(15);
-        showChantOverlay = true;
-        setTimeout(() => showChantOverlay = false, 2000);
-        ">
-        Chant "FIRE NICO"
-      </button>
-
-      <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition m-2"
-        @click="game.decreaseRegret(10)">
-        Take Selfie 📸
-      </button>
-
-      <button class="bg-pink-600 hover:bg-pink-700 text-white font-bold py-2 px-4 rounded transition m-2" @click="
-        game.spendMoney(10);
-      game.decreaseHype(5);
-      game.addRegret(2);
-      ">
-        Buy Hot Dog 🌭
-      </button>
-
-      <button v-if="game.quarter < 3"
-        class="bg-purple-700 hover:bg-purple-800 text-white font-bold py-2 px-4 rounded transition m-2" @click="
-          game.spendMoney(20);
-        game.decreaseRegret(20);
-        game.increaseHype(5);
-        ">
-        Buy Luka Jersey 💔
-      </button>
+      <div v-for="(event, index) in activeButtons" :key="event.id" class="absolute animate-float-chaotic"
+        :style="{ top: event.top + '%', left: event.left + '%' }">
+        <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition m-2"
+          @click="handleButtonClick(event)">
+          {{ event.label }}
+        </button>
+      </div>
     </main>
 
     <!-- 👑 Courtside Celebs -->
@@ -91,25 +50,22 @@
       <img :src="mister" alt="Mister" class="w-[35px] h-auto object-contain animate-bounce-gently" />
     </div>
 
-
     <footer class="p-4 text-center">
-      <!-- Optional debug/stats area -->
+      <!-- Optional debug -->
     </footer>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useGameStore } from './stores/game'
-import { computed } from 'vue'
+import { buttonEvents } from './data/buttonEvents'
+
+// Background + Assets
 import courtBg from './assets/images/court-bg.png'
 import bball from './assets/images/bball.png'
-import clippy from './assets/images/courtside/clippy.png'
-import drake from './assets/images/courtside/drake.png'
-import riri from './assets/images/courtside/riri.png'
-import mister from './assets/images/courtside/mister.png'
-import sandler from './assets/images/courtside/sandler.png'
-import me from './assets/images/courtside/me.png'
+
+// Players
 import shai from './assets/images/players/shai.png'
 import luka from './assets/images/players/luka.png'
 import durant from './assets/images/players/durant.png'
@@ -121,8 +77,30 @@ import lebrugh from './assets/images/players/lebrugh.png'
 import russ from './assets/images/players/russ.png'
 import jimmy from './assets/images/players/jimmy.png'
 
+// Celebs
+import clippy from './assets/images/courtside/clippy.png'
+import drake from './assets/images/courtside/drake.png'
+import riri from './assets/images/courtside/riri.png'
+import sandler from './assets/images/courtside/sandler.png'
+import me from './assets/images/courtside/me.png'
+import mister from './assets/images/courtside/mister.png'
+
 const game = useGameStore()
 const showChantOverlay = ref(false)
+const activeButtons = ref([])
+
+const players = [
+  { src: shai, name: 'Shai', class: 'animate-chaotic-1' },
+  { src: luka, name: 'Luka', class: 'animate-chaotic-2' },
+  { src: durant, name: 'Durant', class: 'animate-chaotic-3' },
+  { src: ja, name: 'Ja', class: 'animate-chaotic-4' },
+  { src: caruso, name: 'Caruso', class: 'animate-chaotic-5' },
+  { src: jokic, name: 'Jokic', class: 'animate-chaotic-6' },
+  { src: steph, name: 'Steph', class: 'animate-chaotic-7' },
+  { src: lebrugh, name: 'LeBrugh', class: 'animate-chaotic-8' },
+  { src: russ, name: 'Russ', class: 'animate-chaotic-9' },
+  { src: jimmy, name: 'Jimmy', class: 'animate-chaotic-10' },
+]
 
 const scoreStatus = computed(() => {
   if (game.scoreGap > 0) return `Winning by: ${Math.abs(game.scoreGap)}`
@@ -137,12 +115,11 @@ const scoreClass = computed(() => {
 })
 
 onMounted(() => {
-  const interval = setInterval(() => {
+  const gameInterval = setInterval(() => {
     game.time++
 
     if (game.time % 15 === 0 && game.quarter < 4) {
       game.advanceQuarter()
-      console.log(`Quarter ${game.quarter}`)
     }
 
     if (game.hype > 50) {
@@ -154,32 +131,78 @@ onMounted(() => {
     if (game.quarter === 3 && !game.lukaTraded) {
       game.lukaTraded = true
       game.addRegret(20)
-      console.log('Luka traded at halftime! Riots ensue across Texas.')
     }
   }, 1000)
 
-  onUnmounted(() => clearInterval(interval))
+  const buttonInterval = setInterval(() => {
+    spawnRandomButton()
+  }, 3000)
+
+  onUnmounted(() => {
+    clearInterval(gameInterval)
+    clearInterval(buttonInterval)
+  })
 })
+
+function spawnRandomButton() {
+  const randomIndex = Math.floor(Math.random() * buttonEvents.length)
+  const randomEvent = buttonEvents[randomIndex]
+  const id = Date.now() + Math.random()
+
+  activeButtons.value.push({
+    id,
+    ...randomEvent,
+    top: Math.random() * 80 + 10,
+    left: Math.random() * 80 + 10,
+  })
+
+  setTimeout(() => {
+    activeButtons.value = activeButtons.value.filter(btn => btn.id !== id)
+  }, 10000)
+}
+
+function handleButtonClick(event) {
+  if (event.cost) {
+    game.spendMoney(event.cost)
+  }
+
+  const roll = Math.random()
+  let cumulativeChance = 0
+
+  for (const outcome of event.outcomes) {
+    cumulativeChance += outcome.chance
+    if (roll <= cumulativeChance) {
+      if (outcome.effect.hype) {
+        game.increaseHype(outcome.effect.hype)
+      }
+      if (outcome.effect.regret) {
+        game.addRegret(outcome.effect.regret)
+      }
+      break
+    }
+  }
+
+  activeButtons.value = activeButtons.value.filter(btn => btn.id !== event.id)
+}
 </script>
 
-
-
 <style scoped>
-@keyframes floating {
+/* 🏀 Floating chaotic drift for buttons */
+@keyframes float-chaotic {
   0% {
     transform: translate(0, 0);
   }
 
   25% {
-    transform: translate(20px, -15px);
+    transform: translate(10px, -5px);
   }
 
   50% {
-    transform: translate(-10px, 10px);
+    transform: translate(-8px, 6px);
   }
 
   75% {
-    transform: translate(15px, -5px);
+    transform: translate(5px, -10px);
   }
 
   100% {
@@ -187,10 +210,28 @@ onMounted(() => {
   }
 }
 
-.animate-floating {
-  animation: floating 5s ease-in-out infinite;
+.animate-float-chaotic {
+  animation: float-chaotic 6s ease-in-out infinite;
 }
 
+/* 🏀 Bouncing Celebs */
+@keyframes bounce-gently {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+.animate-bounce-gently {
+  animation: bounce-gently 2s ease-in-out infinite;
+}
+
+/* 🏀 Floating Basketball */
 @keyframes bounce-chaotic {
   0% {
     top: 20vh;
@@ -223,28 +264,12 @@ onMounted(() => {
   }
 }
 
-@keyframes bounce-gently {
-
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-5px);
-  }
-}
-
-.animate-bounce-gently {
-  animation: bounce-gently 2s ease-in-out infinite;
-}
-
-
 .animate-bounce-dvd {
   animation: bounce-chaotic 11s linear infinite;
   position: absolute;
 }
 
+/* 🏀 Floating NBA Players (chaotic) */
 @keyframes bounce-chaotic-1 {
   0% {
     top: 10vh;
@@ -515,7 +540,6 @@ onMounted(() => {
   }
 }
 
-/* Matching utility classes */
 .animate-chaotic-1 {
   animation: bounce-chaotic-1 12s linear infinite;
   position: absolute;
@@ -557,7 +581,7 @@ onMounted(() => {
 }
 
 .animate-chaotic-9 {
-  animation: bounce-chaotic-9 2s linear infinite;
+  animation: bounce-chaotic-9 3s linear infinite;
   position: absolute;
 }
 
@@ -566,6 +590,7 @@ onMounted(() => {
   position: absolute;
 }
 
+/* 🏀 Players shared style */
 .player-face {
   width: 90px;
   height: 90px;
