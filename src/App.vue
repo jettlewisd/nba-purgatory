@@ -71,15 +71,14 @@
     </main>
 
     <!-- 👑 Courtside Celebs -->
-    <div class="relative absolute bottom-[8%] left-1/2 transform -translate-x-1/2 flex gap-4 z-30 w-[220px]">
+    <div class="absolute bottom-[8%] left-1/2 transform -translate-x-1/2 flex justify-between z-30 relative w-[600px]">
       <img :src="drake" alt="Drake" class="w-[57px] h-auto object-contain animate-bounce-gently" />
-      <img :src="riri" alt="Rihanna" class="w-[89px] h-auto object-contain animate-bounce-gently" />
       <img :src="clippy" alt="Clippy" class="w-[80px] h-auto object-contain animate-bounce-gently" />
-      <img :src="mister" alt="Mister" class="w-[35px] h-auto object-contain animate-bounce-gently" />
+      <img :src="riri" alt="Rihanna" class="w-[89px] h-auto object-contain animate-bounce-gently" />
       <img :src="sandler" alt="Sandler" class="w-[47px] h-auto object-contain animate-bounce-gently" />
       <img :src="me" alt="Me" class="w-[85px] h-auto object-contain animate-bounce-gently" />
+      <img :src="mister" alt="Mister" class="w-[35px] h-auto object-contain animate-bounce-gently" />
     </div>
-
 
 
     <footer class="p-4 text-center">
