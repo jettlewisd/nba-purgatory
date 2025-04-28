@@ -7,22 +7,44 @@
     <img v-for="(player, idx) in players" :key="idx" :src="player.src" :alt="player.name" :class="player.class"
       class="player-face" />
 
-    <!-- 🏀 Header -->
-    <header class="p-4 text-center">
-      <h2 class="text-2xl font-bold">Quarter: {{ game.quarter }}</h2>
-      <h2 class="text-xl">Time: {{ game.time }} sec</h2>
-      <h2 class="text-2xl font-bold">Money: {{ game.money }}</h2>
-      <h2 class="text-2xl font-bold">Hype Level: {{ game.hype }}</h2>
-      <h2 class="text-xl">Regret: {{ game.regret }}</h2>
+    <header class="p-4 text-center flex flex-col items-center space-y-4">
+      <!-- Top Row: Quarter + Time (Even Alignment) -->
+      <div class="flex space-x-8 text-lg">
+        <div class="flex flex-col items-center w-32">
+          🕒
+          <span>Quarter {{ game.quarter }}</span>
+        </div>
+        <div class="flex flex-col items-center w-32">
+          ⏳
+          <span>Time: {{ game.time }}s</span>
+        </div>
+      </div>
 
-      <h2 :class="['text-xl font-bold', scoreClass]">
+
+      <!-- Middle Row: Money / Hype / Regret (Pills) -->
+      <div class="flex space-x-6 text-xl font-bold mt-2">
+        <div class="stat-pill bg-green-500/30 text-green-300">
+          💵 ${{ game.money }}
+        </div>
+        <div class="stat-pill bg-blue-500/30 text-blue-300">
+          🎉 Hype: {{ game.hype }}
+        </div>
+        <div class="stat-pill bg-red-500/30 text-red-300">
+          😬 Regret: {{ game.regret }}
+        </div>
+      </div>
+
+      <!-- Bottom Row: Score Status -->
+      <h2 :class="['text-2xl font-bold mt-4', scoreClass]">
         {{ scoreStatus }}
       </h2>
 
-      <h3 v-if="game.lukaTraded" class="text-md text-red-400">
+      <!-- Luka trade event -->
+      <h3 v-if="game.lukaTraded" class="text-md text-red-400 mt-2">
         Luka traded at halftime! Riots ensue across Texas and your regret increases.
       </h3>
     </header>
+
 
     <!-- 🏟️ Court (Floating Buttons) -->
     <main class="relative w-full h-full overflow-hidden">
@@ -597,5 +619,18 @@ function handleButtonClick(event) {
   object-fit: contain;
   position: absolute;
   z-index: 10;
+}
+
+.stat-pill {
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  font-weight: bold;
+}
+
+header {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 0.75rem;
 }
 </style>
