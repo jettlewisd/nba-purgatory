@@ -7,44 +7,47 @@
     <img v-for="(player, idx) in players" :key="idx" :src="player.src" :alt="player.name" :class="player.class"
       class="player-face" />
 
+
+
     <header class="p-4 text-center flex flex-col items-center space-y-8">
-      <!-- Top Row: Quarter + Time -->
-      <div class="flex flex-row space-x-12 text-lg">
-        <div class="flex flex-col items-center w-32">
-          🕒
-          <span>Quarter {{ game.quarter }}</span>
+      <div class="bg-black/50 rounded-xl p-6 backdrop-blur-md">
+        <!-- Top Row: Quarter + Time -->
+        <div class="flex flex-row space-x-12 text-lg">
+          <div class="flex flex-col items-center w-32">
+            🕒
+            <span>Quarter {{ game.quarter }}</span>
+          </div>
+          <div class="flex flex-col items-center w-32">
+            ⏳
+            <span>Time: {{ game.time }}s</span>
+          </div>
         </div>
-        <div class="flex flex-col items-center w-32">
-          ⏳
-          <span>Time: {{ game.time }}s</span>
+
+        <!-- Middle Row: Money / Hype / Regret -->
+        <div class="flex flex-row gap-x-10 text-xl font-bold mt-6">
+          <div class="px-6 py-3 rounded-full font-bold bg-green-600 text-white shadow-md">
+            💵 ${{ game.money }}
+          </div>
+          <div class="px-6 py-3 rounded-full font-bold bg-blue-600 text-white shadow-md">
+            🎉 Hype: {{ game.hype }}
+          </div>
+          <div class="px-6 py-3 rounded-full font-bold bg-red-600 text-white shadow-md">
+            😬 Regret: {{ game.regret }}
+          </div>
         </div>
-      </div>
 
-      <!-- Middle Row: Money / Hype / Regret -->
-      <div class="flex flex-row gap-x-8 text-xl font-bold">
-        <div class="flex items-center justify-center bg-green-600 text-white rounded-full px-6 py-3 shadow-lg">
-          💵 $123
-        </div>
-        <div class="flex items-center justify-center bg-blue-600 text-white rounded-full px-6 py-3 shadow-lg">
-          🎉 Hype: 45
-        </div>
-        <div class="flex items-center justify-center bg-red-600 text-white rounded-full px-6 py-3 shadow-lg">
-          😬 Regret: 12
-        </div>
-      </div>
+        <!-- Bottom Row: Score Status -->
+        <h2 :class="['text-2xl font-bold mt-6', scoreClass]">
+          {{ scoreStatus }}
+        </h2>
 
-
-
-      <!-- Bottom Row: Score Status -->
-      <h2 :class="['text-2xl font-bold', scoreClass]">
-        {{ scoreStatus }}
-      </h2>
-
-      <!-- Luka trade event -->
-      <h3 v-if="game.lukaTraded" class="text-md text-red-400">
-        Luka traded at halftime! Riots ensue across Texas and your regret increases.
-      </h3>
+        <!-- Luka trade event -->
+        <h3 v-if="game.lukaTraded" class="text-md text-red-400 mt-2">
+          Luka traded at halftime! Riots ensue across Texas and your regret increases.
+        </h3>
+      </div> <!-- end blurred background -->
     </header>
+
 
 
 
