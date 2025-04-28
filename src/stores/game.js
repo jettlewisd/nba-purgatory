@@ -1,3 +1,5 @@
+
+
 import { defineStore } from 'pinia';
 
 export const useGameStore = defineStore('game', {
@@ -34,6 +36,6 @@ export const useGameStore = defineStore('game', {
         decreaseRegret(amount) {
             this.regret = Math.max(0, this.regret - amount)
         },
-          
+
     }
 })
