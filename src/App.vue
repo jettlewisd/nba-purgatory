@@ -1,5 +1,5 @@
 <template>
-  <div class="relative flex flex-col justify-between h-screen w-screen text-white bg-cover bg-center bg-no-repeat"
+  <div class="relative flex flex-col justify-between h-screen w-screen bg-cover bg-center bg-no-repeat"
     :style="{ backgroundImage: `url(${courtBg})` }">
 
     <!-- Floating Ball + Players -->
@@ -7,47 +7,45 @@
     <img v-for="(player, idx) in players" :key="idx" :src="player.src" :alt="player.name" :class="player.class"
       class="player-face" />
 
+    <header class="p-4 text-center flex flex-col items-center font-['Press_Start_2P']">
+      <!-- Top Row -->
+      <div class="flex flex-row justify-center gap-x-16 text-lg mb-10">
+        <div class="flex flex-col items-center w-32">
+          🕒
+          <span>Quarter {{ game.quarter }}</span>
+        </div>
+        <div class="flex flex-col items-center w-32">
+          ⏳
+          <span>Time: {{ game.time }}s</span>
+        </div>
+      </div>
 
-
-    <header class="p-4 text-center flex flex-col items-center space-y-8">
-      <div class="bg-black/50 rounded-xl p-6 backdrop-blur-md">
-        <!-- Top Row: Quarter + Time -->
-        <div class="flex flex-row space-x-12 text-lg">
-          <div class="flex flex-col items-center w-32">
-            🕒
-            <span>Quarter {{ game.quarter }}</span>
-          </div>
-          <div class="flex flex-col items-center w-32">
-            ⏳
-            <span>Time: {{ game.time }}s</span>
-          </div>
+      <!-- Middle Row: Pills wrapper -->
+      <div class="flex flex-row justify-center gap-x-32 mb-10">
+        <div style="background-color: green; color: black;"
+          class="px-8 py-4 rounded-full border-2 border-black text-xl font-bold text-center">
+          💵 ${{ game.money }}
         </div>
 
-        <!-- Middle Row: Money / Hype / Regret -->
-        <div class="flex flex-row gap-x-10 text-xl font-bold mt-6">
-          <div class="px-6 py-3 rounded-full font-bold bg-green-600 text-white shadow-md">
-            💵 ${{ game.money }}
-          </div>
-          <div class="px-6 py-3 rounded-full font-bold bg-blue-600 text-white shadow-md">
-            🎉 Hype: {{ game.hype }}
-          </div>
-          <div class="px-6 py-3 rounded-full font-bold bg-red-600 text-white shadow-md">
-            😬 Regret: {{ game.regret }}
-          </div>
+        <div
+          class="bg-purple-600 bg-opacity-100 text-black px-8 py-4 rounded-full border-2 border-black text-xl font-bold text-center">
+          🎉 Hype: {{ game.hype }}
         </div>
+        <div
+          class="bg-orange-600 bg-opacity-100 text-black px-8 py-4 rounded-full border-2 border-black text-xl font-bold text-center">
+          😬 Regret: {{ game.regret }}
+        </div>
+      </div>
 
-        <!-- Bottom Row: Score Status -->
-        <h2 :class="['text-2xl font-bold mt-6', scoreClass]">
-          {{ scoreStatus }}
-        </h2>
 
-        <!-- Luka trade event -->
-        <h3 v-if="game.lukaTraded" class="text-md text-red-400 mt-2">
-          Luka traded at halftime! Riots ensue across Texas and your regret increases.
-        </h3>
-      </div> <!-- end blurred background -->
+      <!-- Bottom Row -->
+      <h2 :class="['text-2xl font-bold', scoreClass]">
+        {{ scoreStatus }}
+      </h2>
+      <h3 v-if="game.lukaTraded" class="text-md text-red-400 mt-4">
+        Luka traded at halftime! Riots ensue across Texas and your regret increases.
+      </h3>
     </header>
-
 
 
 
@@ -82,6 +80,7 @@
     </footer>
   </div>
 </template>
+
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
@@ -212,6 +211,7 @@ function handleButtonClick(event) {
   activeButtons.value = activeButtons.value.filter(btn => btn.id !== event.id)
 }
 </script>
+
 
 <style scoped>
 /* 🏀 Floating chaotic drift for buttons */
@@ -623,11 +623,5 @@ function handleButtonClick(event) {
   object-fit: contain;
   position: absolute;
   z-index: 10;
-}
-
-
-header {
-  font-family: 'Press Start 2P', cursive;
-  font-size: 0.75rem;
 }
 </style>
