@@ -8,34 +8,36 @@
       class="player-face" />
 
     <header class="p-4 text-center flex flex-col items-center font-['Press_Start_2P']">
-      <!-- Top Row -->
-      <div class="flex flex-row justify-center gap-x-16 text-lg mb-10">
-        <div class="flex flex-col items-center w-32">
-          🕒
-          <span>Quarter {{ game.quarter }}</span>
-        </div>
-        <div class="flex flex-col items-center w-32">
-          ⏳
-          <span>Time: {{ game.time }}s</span>
+
+      <!-- Top Row: Quarter + Time (combined into one pill) -->
+      <div class="flex flex-row justify-center gap-x-32 text-lg mb-10">
+        <div
+          class="bg-purple-300 text-gray-600 px-8 py-4 rounded-full border-2 border-black text-center text-xl font-bold flex flex-col items-center">
+          🕒 Quarter {{ game.quarter }}
+          <span class="mt-2">⏳ Time: {{ game.time }}s</span>
         </div>
       </div>
+
 
       <!-- Middle Row: Pills wrapper -->
-      <div class="flex flex-row justify-center gap-x-32 mb-10">
-        <div style="background-color: green; color: black;"
-          class="px-8 py-4 rounded-full border-2 border-black text-xl font-bold text-center">
-          💵 ${{ game.money }}
+      <div class="flex flex-row justify-center gap-x-10 mb-8">
+        <div
+          class="bg-green-600 text-gray-200 px-4 py-2 rounded-full border-2 border-black text-base font-bold text-center">
+          Money: ${{ game.money }}
         </div>
 
         <div
-          class="bg-purple-600 bg-opacity-100 text-black px-8 py-4 rounded-full border-2 border-black text-xl font-bold text-center">
-          🎉 Hype: {{ game.hype }}
+          class="bg-blue-600 text-gray-200 px-4 py-2 rounded-full border-2 border-black text-base font-bold text-center">
+          Hype: {{ game.hype }}
         </div>
+
         <div
-          class="bg-orange-600 bg-opacity-100 text-black px-8 py-4 rounded-full border-2 border-black text-xl font-bold text-center">
-          😬 Regret: {{ game.regret }}
+          class="bg-red-600 text-gray-200 px-4 py-2 rounded-full border-2 border-black text-base font-bold text-center">
+          Regret: {{ game.regret }}
         </div>
       </div>
+
+
 
 
       <!-- Bottom Row -->
@@ -43,7 +45,7 @@
         {{ scoreStatus }}
       </h2>
       <h3 v-if="game.lukaTraded" class="text-md text-red-400 mt-4">
-        Luka traded at halftime! Riots ensue across Texas and your regret increases.
+        Luka traded at halftime! Riots ensue across Texas. Your regret increases.
       </h3>
     </header>
 
@@ -55,6 +57,17 @@
         class="absolute top-10 left-1/2 transform -translate-x-1/2 bg-red-700 text-white px-6 py-3 rounded shadow-lg text-xl font-bold animate-bounce z-50">
         🔥 FIRE NICO!! The crowd is losing it!
       </div>
+
+      <div v-if="showQuarterOver"
+        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-400 text-black px-8 py-4 rounded shadow-lg text-3xl font-bold z-50">
+        Quarter Over!
+      </div>
+
+      <div v-if="showGameOver"
+        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-600 text-white px-8 py-4 rounded shadow-lg text-4xl font-bold z-50">
+        GAME OVER
+      </div>
+
 
       <div v-for="(event, index) in activeButtons" :key="event.id" class="absolute animate-float-chaotic"
         :style="{ top: event.top + '%', left: event.left + '%' }">
@@ -113,6 +126,8 @@ import mister from './assets/images/courtside/mister.png'
 
 const game = useGameStore()
 const showChantOverlay = ref(false)
+const showQuarterOver = ref(false)
+const showGameOver = ref(false)
 const activeButtons = ref([])
 
 const players = [
@@ -131,29 +146,38 @@ const players = [
 const scoreStatus = computed(() => {
   if (game.scoreGap > 0) return `Winning by: ${Math.abs(game.scoreGap)}`
   if (game.scoreGap < 0) return `Losing by: ${Math.abs(game.scoreGap)}`
-  return 'Tied Game'
+  return 'Game Tied'
 })
 
 const scoreClass = computed(() => {
-  if (game.scoreGap > 0) return 'text-green-400'
-  if (game.scoreGap < 0) return 'text-red-400'
-  return 'text-yellow-300'
+  if (game.scoreGap > 0) return 'text-green-600'
+  if (game.scoreGap < 0) return 'text-red-500'
+  return 'text-gray-500'
 })
 
 onMounted(() => {
-  const gameInterval = setInterval(() => {
-    game.time++
+  game.time = 15
 
-    if (game.time % 15 === 0 && game.quarter < 4) {
-      game.advanceQuarter()
+  const gameInterval = setInterval(() => {
+    game.time--
+
+    if (game.time <= 0) {
+      if (game.quarter < 4) {
+        game.advanceQuarter()
+        game.time = 15
+      } else {
+        game.time = 0
+      }
     }
 
+    // Update score based on hype
     if (game.hype > 50) {
       game.updateScoreGap(1)
     } else if (game.hype < 50) {
       game.updateScoreGap(-1)
     }
 
+    // Luka traded at halftime
     if (game.quarter === 3 && !game.lukaTraded) {
       game.lukaTraded = true
       game.addRegret(20)
