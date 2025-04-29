@@ -12,6 +12,8 @@ export const useGameStore = defineStore('game', {
         time: 0,
         isEjected: false,
         lukaTraded: false,
+        userScore: 0,
+        themScore: 0,
     }),
 
     actions: {
@@ -36,6 +38,13 @@ export const useGameStore = defineStore('game', {
         decreaseRegret(amount) {
             this.regret = Math.max(0, this.regret - amount)
         },
+        increaseUserScore(points) {
+            this.userScore += points
+        },
+        increaseThemScore(points) {
+            this.themScore += points
+        },
+
 
     }
 })

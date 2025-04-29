@@ -7,8 +7,9 @@
     <img v-for="(player, idx) in players" :key="idx" :src="player.src" :alt="player.name" :class="player.class"
       class="player-face" />
 
-    <header class="p-4 text-center flex flex-col items-center font-['Press_Start_2P']">
 
+
+    <header class="p-4 text-center flex flex-col items-center font-['Press_Start_2P']">
       <!-- Top Row: Stat Pills wrapper -->
       <div class="flex flex-row justify-center gap-x-10 mb-2">
         <div
@@ -25,30 +26,32 @@
         </div>
       </div>
 
-      <!-- Quarter + Time Pill (below stats) -->
+      <!-- Combined Quarter/Time + Score Pill -->
       <div class="flex flex-row justify-center gap-x-32 text-lg mb-5">
         <div
-          class="bg-purple-600 text-gray-200 px-10 py-3 rounded-full border-2 border-black text-center text-xl font-bold flex flex-col items-center scale-[0.85]">
-          🕒 Quarter {{ game.quarter }}
-          <span class="mt-1 text-base">⏳ Time: {{ game.time }}s</span>
+          class="bg-purple-600 text-gray-200 px-10 py-3 rounded-full border-2 border-black text-xl font-bold flex items-center justify-center gap-x-8 scale-[0.85]">
+
+          <!-- Left Stack: Quarter + Time -->
+          <div class="flex flex-col items-start leading-snug">
+            <span> Q: {{ game.quarter }}</span>
+            <span class="text-base"> Time: {{ game.time }}s</span>
+          </div>
+
+          <!-- Divider Line -->
+          <div class="w-[2px] h-[40px] bg-black opacity-40 rounded-sm"></div>
+
+          <!-- Right Stack: You vs Them -->
+          <div class="flex flex-col items-start leading-snug">
+            <span> You: {{ game.userScore }}</span>
+            <span class="text-base">Them: {{ game.themScore }}</span>
+          </div>
         </div>
       </div>
-
-
-
-
-
-      <!-- Bottom Row -->
-      <h2 :class="['text-2xl font-bold', scoreClass]">
-        {{ scoreStatus }}
-      </h2>
-      <h3 v-if="game.lukaTraded" class="text-md text-red-400 mt-4">
-        Luka traded at halftime! Riots ensue across Texas. Your regret increases.
-      </h3>
     </header>
 
 
-    <!-- 🏟️ Court (Floating Buttons) -->
+
+    <!-- 🏟️ Court (Floating Buttons / Overlays) -->
     <main class="relative w-full h-full overflow-hidden">
       <div v-if="showChantOverlay"
         class="absolute top-10 left-1/2 transform -translate-x-1/2 bg-red-700 text-white px-6 py-3 rounded shadow-lg text-xl font-bold animate-bounce z-50">
@@ -65,6 +68,12 @@
         GAME OVER
       </div>
 
+      <div v-if="showLukaMessage"
+        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-600 text-white px-8 py-4 rounded shadow-lg text-3xl font-bold z-50 text-center max-w-[80%] leading-snug">
+        Luka traded at halftime!<br />
+        Riots ensue across Texas.<br />
+        Your regret increases.
+      </div>
 
       <div v-for="(event, index) in activeButtons" :key="event.id" class="absolute animate-float-chaotic"
         :style="{ top: event.top + '%', left: event.left + '%' }">
@@ -74,6 +83,8 @@
         </button>
       </div>
     </main>
+
+
 
     <!-- 👑 Courtside Celebs -->
     <div class="absolute bottom-[1%] left-1/2 transform -translate-x-1/2 flex justify-center gap-x-3 z-30 w-[720px]">
@@ -93,15 +104,17 @@
       <img :src="buggy" alt="Buggy" class="w-[80px] h-auto object-contain animate-bounce-gently" />
     </div>
 
+
+
     <footer class="p-4 text-center">
-      <!-- Optional debug -->
+      <!-- Optional Row here -->
     </footer>
   </div>
 </template>
 
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useGameStore } from './stores/game'
 import { buttonEvents } from './data/buttonEvents'
 
@@ -142,7 +155,7 @@ const showChantOverlay = ref(false)
 const activeButtons = ref([])
 const showQuarterOver = ref(false)
 const showGameOver = ref(false)
-
+const showLukaMessage = ref(false)
 
 // Players animation data
 const players = [
@@ -158,25 +171,10 @@ const players = [
   { src: jimmy, name: 'Jimmy', class: 'animate-chaotic-10' },
 ]
 
-// Score display logic
-const scoreStatus = computed(() => {
-  if (game.scoreGap > 0) return `Winning by: ${Math.abs(game.scoreGap)}`
-  if (game.scoreGap < 0) return `Losing by: ${Math.abs(game.scoreGap)}`
-  return 'Game Tied'
-})
-
-const scoreClass = computed(() => {
-  if (game.scoreGap > 0) return 'text-green-600'
-  if (game.scoreGap < 0) return 'text-red-500'
-  return 'text-gray-600'
-})
-
 onMounted(() => {
-
   game.time = 15
 
   const gameInterval = setInterval(() => {
-
     if (game.time > 0) {
       game.time--
     } else {
@@ -188,6 +186,11 @@ onMounted(() => {
         if (game.quarter === 3 && !game.lukaTraded) {
           game.lukaTraded = true
           game.addRegret(20)
+          showLukaMessage.value = true
+          showQuarterOver.value = false
+          setTimeout(() => {
+            showLukaMessage.value = false
+          }, 5000)
         }
 
         setTimeout(() => {
@@ -198,11 +201,14 @@ onMounted(() => {
       }
     }
 
+    // Example placeholder: give user 1 point every second if hype is high
+    if (game.hype > 75) {
+      game.increaseUserScore(1)
+    }
 
-    if (game.hype > 50) {
-      game.updateScoreGap(1)
-    } else if (game.hype < 50) {
-      game.updateScoreGap(-1)
+    // Example placeholder: give opponent 1 point if hype is super low
+    if (game.hype < 20) {
+      game.increaseThemScore(1)
     }
   }, 1000)
 
@@ -222,7 +228,7 @@ function spawnRandomButton() {
 
   // 🛑 Block Rage Chant!! if Luka hasn't been traded yet
   if (randomEvent.label === "Rage Chant!!" && !game.lukaTraded) {
-    return // do not spawn this event
+    return
   }
 
   const id = Date.now() + Math.random()
@@ -238,7 +244,6 @@ function spawnRandomButton() {
     activeButtons.value = activeButtons.value.filter(btn => btn.id !== id)
   }, 4000)
 }
-
 
 function handleButtonClick(event) {
   if (event.cost) {
@@ -264,6 +269,7 @@ function handleButtonClick(event) {
   activeButtons.value = activeButtons.value.filter(btn => btn.id !== event.id)
 }
 </script>
+
 
 
 
