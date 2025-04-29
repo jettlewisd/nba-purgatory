@@ -9,8 +9,8 @@
 
     <header class="p-4 text-center flex flex-col items-center font-['Press_Start_2P']">
 
-      <!-- Top Row: Pills wrapper -->
-      <div class="flex flex-row justify-center gap-x-10 mb-6">
+      <!-- Top Row: Stat Pills wrapper -->
+      <div class="flex flex-row justify-center gap-x-10 mb-2">
         <div
           class="bg-green-600 text-gray-200 px-4 py-2 rounded-full border-2 border-black text-base font-bold text-center">
           Money: ${{ game.money }}
@@ -25,10 +25,10 @@
         </div>
       </div>
 
-      <!-- Quarter + Time pill (below stats) -->
-      <div class="flex flex-row justify-center gap-x-32 text-lg mb-10">
+      <!-- Quarter + Time Pill (below stats) -->
+      <div class="flex flex-row justify-center gap-x-32 text-lg mb-5">
         <div
-          class="bg-purple-600 text-gray-200 px-6 py-3 rounded-full border-2 border-black text-center text-lg font-bold flex flex-col items-center scale-[0.85]">
+          class="bg-purple-600 text-gray-200 px-10 py-3 rounded-full border-2 border-black text-center text-xl font-bold flex flex-col items-center scale-[0.85]">
           🕒 Quarter {{ game.quarter }}
           <span class="mt-1 text-base">⏳ Time: {{ game.time }}s</span>
         </div>
@@ -172,7 +172,7 @@ const scoreClass = computed(() => {
 })
 
 onMounted(() => {
-  // Initialize game timer
+
   game.time = 15
 
   const gameInterval = setInterval(() => {
@@ -224,13 +224,13 @@ function spawnRandomButton() {
   activeButtons.value.push({
     id,
     ...randomEvent,
-    top: Math.random() * 80 + 10,
+    top: Math.random() * 60 + 10,
     left: Math.random() * 80 + 10,
   })
 
   setTimeout(() => {
     activeButtons.value = activeButtons.value.filter(btn => btn.id !== id)
-  }, 10000)
+  }, 4000)
 }
 
 function handleButtonClick(event) {
@@ -400,7 +400,7 @@ function handleButtonClick(event) {
 
 @keyframes bounce-chaotic-3 {
   0% {
-    top: 5vh;
+    top: 10vh;
     left: 10vw;
   }
 
@@ -410,7 +410,7 @@ function handleButtonClick(event) {
   }
 
   50% {
-    top: 85vh;
+    top: 70vh;
     left: 40vw;
   }
 
@@ -420,7 +420,7 @@ function handleButtonClick(event) {
   }
 
   100% {
-    top: 5vh;
+    top: 11vh;
     left: 10vw;
   }
 }
@@ -454,7 +454,7 @@ function handleButtonClick(event) {
 
 @keyframes bounce-chaotic-5 {
   0% {
-    top: 8vh;
+    top: 14vh;
     left: 15vw;
   }
 
@@ -464,7 +464,7 @@ function handleButtonClick(event) {
   }
 
   50% {
-    top: 60vh;
+    top: 71vh;
     left: 10vw;
   }
 
@@ -474,7 +474,7 @@ function handleButtonClick(event) {
   }
 
   100% {
-    top: 8vh;
+    top: 11vh;
     left: 15vw;
   }
 }
@@ -491,24 +491,24 @@ function handleButtonClick(event) {
   }
 
   50% {
-    top: 45vh;
+    top: 70vh;
     left: 80vw;
   }
 
   75% {
-    top: 10vh;
+    top: 12vh;
     left: 40vw;
   }
 
   100% {
-    top: 12vh;
+    top: 15vh;
     left: 25vw;
   }
 }
 
 @keyframes bounce-chaotic-7 {
   0% {
-    top: 3vh;
+    top: 14vh;
     left: 30vw;
   }
 
@@ -528,14 +528,14 @@ function handleButtonClick(event) {
   }
 
   100% {
-    top: 3vh;
+    top: 12vh;
     left: 30vw;
   }
 }
 
 @keyframes bounce-chaotic-8 {
   0% {
-    top: 6vh;
+    top: 12vh;
     left: 5vw;
   }
 
@@ -545,7 +545,7 @@ function handleButtonClick(event) {
   }
 
   50% {
-    top: 78vh;
+    top: 70vh;
     left: 90vw;
   }
 
@@ -555,7 +555,7 @@ function handleButtonClick(event) {
   }
 
   100% {
-    top: 6vh;
+    top: 19vh;
     left: 5vw;
   }
 }
@@ -567,7 +567,7 @@ function handleButtonClick(event) {
   }
 
   25% {
-    top: 75vh;
+    top: 71vh;
     left: 20vw;
   }
 
@@ -599,7 +599,7 @@ function handleButtonClick(event) {
   }
 
   50% {
-    top: 80vh;
+    top: 70vh;
     left: 45vw;
   }
 
@@ -613,6 +613,7 @@ function handleButtonClick(event) {
     left: 35vw;
   }
 }
+
 
 .animate-chaotic-1 {
   animation: bounce-chaotic-1 12s linear infinite;
