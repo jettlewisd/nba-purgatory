@@ -1,13 +1,28 @@
 <template>
-  <div class="relative flex flex-col justify-between h-screen w-screen bg-cover bg-center bg-no-repeat"
+  <div class="relative flex flex-col justify-between h-screen w-screen bg-cover bg-center bg-no-repeat select-none"
     :style="{ backgroundImage: `url(${courtBg})` }">
 
-    <!-- Floating Ball + Players -->
-    <img :src="bball" alt="Floating Ball" class="w-[40px] h-[40px] object-contain z-10 animate-bounce-dvd" />
+    <!-- Floating Ball (Clickable with Bigger Hitbox) -->
+    <div class="absolute w-[65px] h-[65px] z-50 animate-bounce-dvd flex items-center justify-center"
+      @click="handleBallClick">
+
+      <img :src="bball" alt="Floating Ball" class="w-[70px] h-[70px] object-contain" :class="{ 'pop': isBallPopped }"
+        draggable="false" />
+
+      <!-- Float-Ups appear centered over the ball -->
+      <div v-for="float in floatUps" :key="float.id"
+        class="absolute text-pink-400 text-2xl font-bold pointer-events-none animate-float-up z-60"
+        style="top: 0; left: 0; transform: translate(-50%, -50%)">
+        +1
+      </div>
+    </div>
+
+
+
+
+    <!-- Floating Players -->
     <img v-for="(player, idx) in players" :key="idx" :src="player.src" :alt="player.name" :class="player.class"
       class="player-face" />
-
-
 
     <header class="p-4 text-center flex flex-col items-center font-['Press_Start_2P']">
       <!-- Top Row: Stat Pills wrapper -->
@@ -49,8 +64,6 @@
       </div>
     </header>
 
-
-
     <!-- 🏟️ Court (Floating Buttons / Overlays) -->
     <main class="relative w-full h-full overflow-hidden">
       <div v-if="showChantOverlay"
@@ -75,7 +88,7 @@
         Your regret increases.
       </div>
 
-      <div v-for="(event, index) in activeButtons" :key="event.id" class="absolute animate-float-chaotic"
+      <div v-for="(event, index) in activeButtons" :key="event.id" class="absolute animate-float-chaotic z-40"
         :style="{ top: event.top + '%', left: event.left + '%' }">
         <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition m-2"
           @click="handleButtonClick(event)">
@@ -83,8 +96,6 @@
         </button>
       </div>
     </main>
-
-
 
     <!-- 👑 Courtside Celebs -->
     <div class="absolute bottom-[1%] left-1/2 transform -translate-x-1/2 flex justify-center gap-x-3 z-30 w-[720px]">
@@ -104,13 +115,12 @@
       <img :src="buggy" alt="Buggy" class="w-[80px] h-auto object-contain animate-bounce-gently" />
     </div>
 
-
-
     <footer class="p-4 text-center">
       <!-- Optional Row here -->
     </footer>
   </div>
 </template>
+
 
 
 <script setup>
@@ -156,6 +166,8 @@ const activeButtons = ref([])
 const showQuarterOver = ref(false)
 const showGameOver = ref(false)
 const showLukaMessage = ref(false)
+const floatUps = ref([])
+const isBallPopped = ref(false)
 
 // Players animation data
 const players = [
@@ -201,12 +213,10 @@ onMounted(() => {
       }
     }
 
-    // Example placeholder: give user 1 point every second if hype is high
     if (game.hype > 75) {
       game.increaseUserScore(1)
     }
 
-    // Example placeholder: give opponent 1 point if hype is super low
     if (game.hype < 20) {
       game.increaseThemScore(1)
     }
@@ -268,6 +278,30 @@ function handleButtonClick(event) {
 
   activeButtons.value = activeButtons.value.filter(btn => btn.id !== event.id)
 }
+
+function handleBallClick() {
+  game.increaseUserScore(1)
+
+  // Pop animation reset
+  isBallPopped.value = false
+  requestAnimationFrame(() => {
+    isBallPopped.value = true
+    setTimeout(() => {
+      isBallPopped.value = false
+    }, 150)
+  })
+
+  // 🎈 Spawn a +1 float-up (no mouse coords needed)
+  const id = Date.now() + Math.random()
+  floatUps.value.push({ id })
+
+  // Remove after 600ms
+  setTimeout(() => {
+    floatUps.value = floatUps.value.filter(f => f.id !== id)
+  }, 600)
+}
+
+
 </script>
 
 
@@ -352,9 +386,15 @@ function handleButtonClick(event) {
 }
 
 .animate-bounce-dvd {
-  animation: bounce-chaotic 11s linear infinite;
+  animation: bounce-chaotic 51s linear infinite;
   position: absolute;
 }
+
+.pop {
+  transform: scale(1.15);
+  transition: transform 45ms ease;
+}
+
 
 /* 🏀 Floating NBA Players (chaotic) */
 @keyframes bounce-chaotic-1 {
@@ -684,5 +724,27 @@ function handleButtonClick(event) {
   object-fit: contain;
   position: absolute;
   z-index: 10;
+}
+
+/* This selector disables image/text drag globally within this component */
+* {
+  -webkit-user-drag: none;
+  user-drag: none;
+}
+
+@keyframes float-up {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -100px) scale(1.1);
+  }
+}
+
+.animate-float-up {
+  animation: float-up 0.6s ease-out forwards;
 }
 </style>
