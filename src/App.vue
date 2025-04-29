@@ -219,6 +219,12 @@ onMounted(() => {
 function spawnRandomButton() {
   const randomIndex = Math.floor(Math.random() * buttonEvents.length)
   const randomEvent = buttonEvents[randomIndex]
+
+  // 🛑 Block Rage Chant!! if Luka hasn't been traded yet
+  if (randomEvent.label === "Rage Chant!!" && !game.lukaTraded) {
+    return // do not spawn this event
+  }
+
   const id = Date.now() + Math.random()
 
   activeButtons.value.push({
@@ -232,6 +238,7 @@ function spawnRandomButton() {
     activeButtons.value = activeButtons.value.filter(btn => btn.id !== id)
   }, 4000)
 }
+
 
 function handleButtonClick(event) {
   if (event.cost) {
