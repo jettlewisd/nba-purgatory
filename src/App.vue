@@ -9,33 +9,31 @@
 
     <header class="p-4 text-center flex flex-col items-center font-['Press_Start_2P']">
 
-      <!-- Top Row: Quarter + Time (combined into one pill) -->
-      <div class="flex flex-row justify-center gap-x-32 text-lg mb-10">
-        <div
-          class="bg-purple-300 text-gray-600 px-8 py-4 rounded-full border-2 border-black text-center text-xl font-bold flex flex-col items-center">
-          🕒 Quarter {{ game.quarter }}
-          <span class="mt-2">⏳ Time: {{ game.time }}s</span>
-        </div>
-      </div>
-
-
-      <!-- Middle Row: Pills wrapper -->
-      <div class="flex flex-row justify-center gap-x-10 mb-8">
+      <!-- Top Row: Pills wrapper -->
+      <div class="flex flex-row justify-center gap-x-10 mb-6">
         <div
           class="bg-green-600 text-gray-200 px-4 py-2 rounded-full border-2 border-black text-base font-bold text-center">
           Money: ${{ game.money }}
         </div>
-
         <div
           class="bg-blue-600 text-gray-200 px-4 py-2 rounded-full border-2 border-black text-base font-bold text-center">
           Hype: {{ game.hype }}
         </div>
-
         <div
           class="bg-red-600 text-gray-200 px-4 py-2 rounded-full border-2 border-black text-base font-bold text-center">
           Regret: {{ game.regret }}
         </div>
       </div>
+
+      <!-- Quarter + Time pill (below stats) -->
+      <div class="flex flex-row justify-center gap-x-32 text-lg mb-10">
+        <div
+          class="bg-purple-600 text-gray-200 px-6 py-3 rounded-full border-2 border-black text-center text-lg font-bold flex flex-col items-center scale-[0.85]">
+          🕒 Quarter {{ game.quarter }}
+          <span class="mt-1 text-base">⏳ Time: {{ game.time }}s</span>
+        </div>
+      </div>
+
 
 
 
@@ -48,7 +46,6 @@
         Luka traded at halftime! Riots ensue across Texas. Your regret increases.
       </h3>
     </header>
-
 
 
     <!-- 🏟️ Court (Floating Buttons) -->
@@ -79,13 +76,21 @@
     </main>
 
     <!-- 👑 Courtside Celebs -->
-    <div class="absolute bottom-[8%] left-1/2 transform -translate-x-1/2 flex justify-between z-30 relative w-[600px]">
-      <img :src="drake" alt="Drake" class="w-[57px] h-auto object-contain animate-bounce-gently" />
-      <img :src="clippy" alt="Clippy" class="w-[80px] h-auto object-contain animate-bounce-gently" />
+    <div class="absolute bottom-[1%] left-1/2 transform -translate-x-1/2 flex justify-center gap-x-3 z-30 w-[720px]">
       <img :src="riri" alt="Rihanna" class="w-[89px] h-auto object-contain animate-bounce-gently" />
       <img :src="sandler" alt="Sandler" class="w-[47px] h-auto object-contain animate-bounce-gently" />
-      <img :src="me" alt="Me" class="w-[85px] h-auto object-contain animate-bounce-gently" />
+      <img :src="drake" alt="Drake" class="w-[57px] h-auto object-contain animate-bounce-gently" />
       <img :src="mister" alt="Mister" class="w-[35px] h-auto object-contain animate-bounce-gently" />
+      <img :src="spike" alt="Spike" class="w-[111px] h-auto object-contain animate-bounce-gently" />
+      <img :src="leo" alt="Leo" class="w-[70px] h-auto object-contain animate-bounce-gently" />
+      <img :src="kimk" alt="Kim Kardashian" class="w-[130px] h-auto object-contain animate-bounce-gently" />
+      <img :src="brad" alt="Brad Pitt" class="w-[70px] h-auto object-contain animate-bounce-gently" />
+      <img :src="keanu" alt="Keanu Reeves" class="w-[100px] h-auto object-contain animate-bounce-gently" />
+      <img :src="gosling" alt="Ryan Gosling" class="w-[70px] h-auto object-contain animate-bounce-gently" />
+      <img :src="trav" alt="Travis Scott" class="w-[99px] h-auto object-contain animate-bounce-gently" />
+      <img :src="clippy" alt="Clippy" class="w-[80px] h-auto object-contain animate-bounce-gently" />
+      <img :src="bey" alt="Beyonce" class="w-[101px] h-auto object-contain animate-bounce-gently" />
+      <img :src="buggy" alt="Buggy" class="w-[80px] h-auto object-contain animate-bounce-gently" />
     </div>
 
     <footer class="p-4 text-center">
@@ -121,15 +126,25 @@ import clippy from './assets/images/courtside/clippy.png'
 import drake from './assets/images/courtside/drake.png'
 import riri from './assets/images/courtside/riri.png'
 import sandler from './assets/images/courtside/sandler.png'
-import me from './assets/images/courtside/me.png'
 import mister from './assets/images/courtside/mister.png'
+import spike from './assets/images/courtside/spike.png'
+import leo from './assets/images/courtside/leo.png'
+import kimk from './assets/images/courtside/kimk.png'
+import brad from './assets/images/courtside/brad.png'
+import keanu from './assets/images/courtside/keanu.png'
+import gosling from './assets/images/courtside/gosling.png'
+import trav from './assets/images/courtside/trav.png'
+import bey from './assets/images/courtside/bey.png'
+import buggy from './assets/images/courtside/buggy.png'
 
 const game = useGameStore()
 const showChantOverlay = ref(false)
+const activeButtons = ref([])
 const showQuarterOver = ref(false)
 const showGameOver = ref(false)
-const activeButtons = ref([])
 
+
+// Players animation data
 const players = [
   { src: shai, name: 'Shai', class: 'animate-chaotic-1' },
   { src: luka, name: 'Luka', class: 'animate-chaotic-2' },
@@ -143,6 +158,7 @@ const players = [
   { src: jimmy, name: 'Jimmy', class: 'animate-chaotic-10' },
 ]
 
+// Score display logic
 const scoreStatus = computed(() => {
   if (game.scoreGap > 0) return `Winning by: ${Math.abs(game.scoreGap)}`
   if (game.scoreGap < 0) return `Losing by: ${Math.abs(game.scoreGap)}`
@@ -152,35 +168,41 @@ const scoreStatus = computed(() => {
 const scoreClass = computed(() => {
   if (game.scoreGap > 0) return 'text-green-600'
   if (game.scoreGap < 0) return 'text-red-500'
-  return 'text-gray-500'
+  return 'text-gray-600'
 })
 
 onMounted(() => {
+  // Initialize game timer
   game.time = 15
 
   const gameInterval = setInterval(() => {
-    game.time--
 
-    if (game.time <= 0) {
+    if (game.time > 0) {
+      game.time--
+    } else {
       if (game.quarter < 4) {
         game.advanceQuarter()
         game.time = 15
+        showQuarterOver.value = true
+
+        if (game.quarter === 3 && !game.lukaTraded) {
+          game.lukaTraded = true
+          game.addRegret(20)
+        }
+
+        setTimeout(() => {
+          showQuarterOver.value = false
+        }, 2000)
       } else {
-        game.time = 0
+        showGameOver.value = true
       }
     }
 
-    // Update score based on hype
+
     if (game.hype > 50) {
       game.updateScoreGap(1)
     } else if (game.hype < 50) {
       game.updateScoreGap(-1)
-    }
-
-    // Luka traded at halftime
-    if (game.quarter === 3 && !game.lukaTraded) {
-      game.lukaTraded = true
-      game.addRegret(20)
     }
   }, 1000)
 
@@ -235,6 +257,7 @@ function handleButtonClick(event) {
   activeButtons.value = activeButtons.value.filter(btn => btn.id !== event.id)
 }
 </script>
+
 
 
 <style scoped>
