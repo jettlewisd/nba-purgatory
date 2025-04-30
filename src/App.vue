@@ -18,51 +18,58 @@
     </div>
 
 
-
-
     <!-- Floating Players -->
     <img v-for="(player, idx) in players" :key="idx" :src="player.src" :alt="player.name" :class="player.class"
       class="player-face" />
 
-    <header class="p-4 text-center flex flex-col items-center font-['Press_Start_2P']">
-      <!-- Top Row: Stat Pills wrapper -->
-      <div class="flex flex-row justify-center gap-x-10 mb-2">
-        <div
-          class="bg-green-600 text-gray-200 px-4 py-2 rounded-full border-2 border-black text-base font-bold text-center">
+    <header class="p-4 flex flex-col items-center font-['Press_Start_2P']">
+
+      <!-- 🧠 REGRET METER -->
+      <div class="w-[80%] mx-auto mt-4 mb-3">
+        <p class="text-center text-sm font-bold mb-1 tracking-widest">REGRET</p>
+        <div class="w-full h-6 rounded-full overflow-hidden flex border-2 border-black">
+          <div class="w-1/3 bg-red-600"></div>
+          <div class="w-1/3 bg-blue-400"></div>
+          <div class="w-1/3 bg-green-600"></div>
+        </div>
+      </div>
+
+      <!-- 🌀 HYPE + PILLS ROW -->
+      <div class="w-[60%] mx-auto relative left-[-29px] flex items-center justify-between">
+
+        <!-- 💰 MONEY PILL -->
+        <div class="bg-purple-300 text-black px-4 py-2 rounded-full border-2 border-black text-sm font-bold">
           Money: ${{ game.money }}
         </div>
-        <div
-          class="bg-blue-600 text-gray-200 px-4 py-2 rounded-full border-2 border-black text-base font-bold text-center">
-          Hype: {{ game.hype }}
-        </div>
-        <div
-          class="bg-red-600 text-gray-200 px-4 py-2 rounded-full border-2 border-black text-base font-bold text-center">
-          Regret: {{ game.regret }}
-        </div>
-      </div>
 
-      <!-- Combined Quarter/Time + Score Pill -->
-      <div class="flex flex-row justify-center gap-x-32 text-lg mb-5">
-        <div
-          class="bg-purple-600 text-gray-200 px-10 py-3 rounded-full border-2 border-black text-xl font-bold flex items-center justify-center gap-x-8 scale-[0.85]">
-
-          <!-- Left Stack: Quarter + Time -->
-          <div class="flex flex-col items-start leading-snug">
-            <span> Q: {{ game.quarter }}</span>
-            <span class="text-base"> Time: {{ game.time }}s</span>
-          </div>
-
-          <!-- Divider Line -->
-          <div class="w-[2px] h-[40px] bg-black opacity-40 rounded-sm"></div>
-
-          <!-- Right Stack: You vs Them -->
-          <div class="flex flex-col items-start leading-snug">
-            <span> You: {{ game.userScore }}</span>
-            <span class="text-base">Them: {{ game.themScore }}</span>
+        <!-- 📈 HYPE METER -->
+        <div class="flex flex-col items-center w-[60%] relative -top-[16px]">
+          <p class="text-sm font-bold mb-1 tracking-widest">HYPE</p>
+          <div class="w-full h-4 rounded-full overflow-hidden flex border-2 border-black">
+            <div class="w-1/3 bg-red-600"></div>
+            <div class="w-1/3 bg-blue-400"></div>
+            <div class="w-1/3 bg-green-600"></div>
           </div>
         </div>
+
+        <!-- 🏀 SCORE PILL -->
+        <div
+          class="bg-purple-300 text-black px-4 py-2 rounded-full border-2 border-black text-sm font-bold text-center">
+          You: {{ game.userScore }}<br />Them: {{ game.themScore }}
+        </div>
+
       </div>
+
+      <!-- ⏱️ TIME + QUARTER PILL -->
+      <div
+        class="-mt-5 bg-purple-300 text-black px-2 py-1.5 rounded-full border-2 border-black text-xs font-bold text-center tracking-tight max-w-fit">
+        Q: {{ game.quarter }} | Time: {{ game.time }}s
+      </div>
+
+
     </header>
+
+
 
     <!-- 🏟️ Court (Floating Buttons / Overlays) -->
     <main class="relative w-full h-full overflow-hidden">
@@ -82,10 +89,10 @@
       </div>
 
       <div v-if="showLukaMessage"
-        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-600 text-white px-8 py-4 rounded shadow-lg text-3xl font-bold z-50 text-center max-w-[80%] leading-snug">
-        Luka traded at halftime!<br />
-        Riots ensue across Texas.<br />
-        Your regret increases.
+        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-400 text-black px-8 py-4 rounded shadow-lg text-3xl font-bold z-50 text-center max-w-[80%] leading-snug">
+        Luka traded at the half!!<br />
+        Texas is on fire...<br />
+        also your regret increases.
       </div>
 
       <div v-for="(event, index) in activeButtons" :key="event.id" class="absolute animate-float-chaotic z-40"
