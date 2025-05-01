@@ -25,14 +25,24 @@
     <header class="p-4 flex flex-col items-center font-['Press_Start_2P']">
 
       <!-- 🧠 REGRET METER -->
-      <div class="w-[80%] mx-auto mt-4 mb-3">
+      <div class="w-[80%] mx-auto mt-4 mb-3 relative">
         <p class="text-center text-sm font-bold mb-1 tracking-widest">REGRET</p>
-        <div class="w-full h-6 rounded-full overflow-hidden flex border-2 border-black">
+
+        <!-- Regret Meter Background -->
+        <div class="w-full h-6 rounded-full overflow-hidden flex border-2 border-black relative">
           <div class="w-1/3 bg-red-600"></div>
           <div class="w-1/3 bg-blue-400"></div>
           <div class="w-1/3 bg-green-600"></div>
+
+          <!-- ▼ Indicator -->
+          <div
+            class="absolute top-1/2 -translate-y-1/2 text-black text-lg pointer-events-none transition-all duration-200"
+            :style="{ left: `${Math.min(100, Math.max(0, game.regret))}%`, transform: 'translate(-50%, -50%)' }">
+            ▼
+          </div>
         </div>
       </div>
+
 
       <!-- 🌀 HYPE + PILLS ROW -->
       <div class="w-[60%] mx-auto relative left-[-29px] flex items-center justify-between">
@@ -45,12 +55,22 @@
         <!-- 📈 HYPE METER -->
         <div class="flex flex-col items-center w-[60%] relative -top-[16px]">
           <p class="text-sm font-bold mb-1 tracking-widest">HYPE</p>
-          <div class="w-full h-4 rounded-full overflow-hidden flex border-2 border-black">
+
+          <!-- Hype Meter -->
+          <div class="w-full h-4 rounded-full overflow-hidden flex border-2 border-black relative">
             <div class="w-1/3 bg-red-600"></div>
             <div class="w-1/3 bg-blue-400"></div>
             <div class="w-1/3 bg-green-600"></div>
+
+            <!-- ▼ Indicator -->
+            <div
+              class="absolute top-1/2 -translate-y-1/2 text-black text-sm pointer-events-none transition-all duration-200"
+              :style="{ left: `${Math.min(100, Math.max(0, game.hype))}%`, transform: 'translate(-50%, -50%)' }">
+              ▼
+            </div>
           </div>
         </div>
+
 
         <!-- 🏀 SCORE PILL -->
         <div
