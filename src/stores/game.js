@@ -14,6 +14,7 @@ export const useGameStore = defineStore('game', {
         lukaTraded: false,
         userScore: 0,
         themScore: 0,
+        beerLevel: 0,
     }),
 
     actions: {
@@ -44,7 +45,8 @@ export const useGameStore = defineStore('game', {
         increaseThemScore(points) {
             this.themScore += points
         },
-
-
+        unlockNextBeer() {
+            this.beerLevel++;
+        }
     }
 })

@@ -17,10 +17,11 @@
       </div>
     </div>
 
-
     <!-- Floating Players -->
     <img v-for="(player, idx) in players" :key="idx" :src="player.src" :alt="player.name" :class="player.class"
       class="player-face" />
+
+
 
     <header class="p-4 flex flex-col items-center font-['Press_Start_2P']">
 
@@ -42,7 +43,6 @@
           </div>
         </div>
       </div>
-
 
       <!-- 🌀 HYPE + PILLS ROW -->
       <div class="w-[60%] mx-auto relative left-[-29px] flex items-center justify-between">
@@ -86,8 +86,8 @@
         Q: {{ game.quarter }} | Time: {{ game.time }}s
       </div>
 
-
     </header>
+
 
 
 
@@ -117,8 +117,13 @@
 
       <div v-for="(event, index) in activeButtons" :key="event.id" class="absolute animate-float-chaotic z-40"
         :style="{ top: event.top + '%', left: event.left + '%' }">
-        <button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition m-2"
-          @click="handleButtonClick(event)">
+        <button :class="[
+          'font-bold py-2 px-4 rounded transition m-2 border-2',
+          event.tier === 'low' && 'bg-pink-200 hover:bg-pink-300 text-black border-black',
+          event.tier === 'medium' && 'bg-pink-400 hover:bg-pink-500 text-black border-black',
+          event.tier === 'high' && 'bg-pink-600 hover:bg-pink-700 text-white border-black',
+          event.tier === 'chaotic' && 'bg-pink-800 hover:bg-pink-900 text-white border-black'
+        ]" @click="handleButtonClick(event)">
           {{ event.label }}
         </button>
       </div>
@@ -196,7 +201,11 @@ const showLukaMessage = ref(false)
 const floatUps = ref([])
 const isBallPopped = ref(false)
 
-// Players animation data
+const lowTier = buttonEvents.filter(e => e.tier === "low");
+const mediumTier = buttonEvents.filter(e => e.tier === "medium");
+const highTier = buttonEvents.filter(e => e.tier === "high");
+const chaoticTier = buttonEvents.filter(e => e.tier === "chaotic");
+
 const players = [
   { src: shai, name: 'Shai', class: 'animate-chaotic-1' },
   { src: luka, name: 'Luka', class: 'animate-chaotic-2' },
@@ -209,6 +218,13 @@ const players = [
   { src: russ, name: 'Russ', class: 'animate-chaotic-9' },
   { src: jimmy, name: 'Jimmy', class: 'animate-chaotic-10' },
 ]
+
+const tierWeights = [
+  { tier: "low", weight: 0.5 },
+  { tier: "medium", weight: 0.3 },
+  { tier: "high", weight: 0.15 },
+  { tier: "chaotic", weight: 0.05 }
+];
 
 onMounted(() => {
   game.time = 15
@@ -249,9 +265,20 @@ onMounted(() => {
     }
   }, 1000)
 
+  // 🔥 Start with the first Beer button
+  setTimeout(() => {
+    const firstBeer = buttonEvents.find(e => e.label === "Beer?");
+    activeButtons.value.push({
+      id: Date.now() + Math.random(),
+      ...firstBeer,
+      top: Math.random() * 60 + 10,
+      left: Math.random() * 80 + 10,
+    });
+  }, 1000)
+
   const buttonInterval = setInterval(() => {
     spawnRandomButton()
-  }, 3000)
+  }, 4000)
 
   onUnmounted(() => {
     clearInterval(gameInterval)
@@ -260,26 +287,55 @@ onMounted(() => {
 })
 
 function spawnRandomButton() {
-  const randomIndex = Math.floor(Math.random() * buttonEvents.length)
-  const randomEvent = buttonEvents[randomIndex]
+  const rand = Math.random();
+  let chosenTier = "low";
+  let cumulative = 0;
 
-  // 🛑 Block Rage Chant!! if Luka hasn't been traded yet
-  if (randomEvent.label === "Rage Chant!!" && !game.lukaTraded) {
-    return
+  for (const { tier, weight } of tierWeights) {
+    cumulative += weight;
+    if (rand < cumulative) {
+      chosenTier = tier;
+      break;
+    }
   }
 
-  const id = Date.now() + Math.random()
+  let tierPool = [];
+
+  switch (chosenTier) {
+    case "low": tierPool = lowTier; break;
+    case "medium": tierPool = mediumTier; break;
+    case "high": tierPool = highTier; break;
+    case "chaotic":
+      if (game.quarter < 3) return;
+      tierPool = chaoticTier;
+      break;
+  }
+
+  // Filter beer buttons by beerLevel
+  tierPool = tierPool.filter(e => {
+    if (e.beerLevelRequired === undefined) return true;
+    return e.beerLevelRequired === game.beerLevel;
+  });
+
+  if (tierPool.length === 0) return;
+
+  const randomIndex = Math.floor(Math.random() * tierPool.length);
+  const randomEvent = tierPool[randomIndex];
+
+  if (randomEvent.label === "Rage Chant!!" && !game.lukaTraded) return;
+
+  const id = Date.now() + Math.random();
 
   activeButtons.value.push({
     id,
     ...randomEvent,
     top: Math.random() * 60 + 10,
     left: Math.random() * 80 + 10,
-  })
+  });
 
   setTimeout(() => {
-    activeButtons.value = activeButtons.value.filter(btn => btn.id !== id)
-  }, 4000)
+    activeButtons.value = activeButtons.value.filter(btn => btn.id !== id);
+  }, 4000);
 }
 
 function handleButtonClick(event) {
@@ -299,8 +355,16 @@ function handleButtonClick(event) {
       if (outcome.effect.regret) {
         game.addRegret(outcome.effect.regret)
       }
+      if (outcome.effect.money) {
+        game.spendMoney(-outcome.effect.money)
+      }
       break
     }
+  }
+
+  // 🧃 Unlock next beer level if a beer was clicked
+  if (event.beerLevelRequired !== undefined) {
+    game.unlockNextBeer();
   }
 
   activeButtons.value = activeButtons.value.filter(btn => btn.id !== event.id)
@@ -309,7 +373,6 @@ function handleButtonClick(event) {
 function handleBallClick() {
   game.increaseUserScore(1)
 
-  // Pop animation reset
   isBallPopped.value = false
   requestAnimationFrame(() => {
     isBallPopped.value = true
@@ -318,18 +381,15 @@ function handleBallClick() {
     }, 150)
   })
 
-  // 🎈 Spawn a +1 float-up (no mouse coords needed)
   const id = Date.now() + Math.random()
   floatUps.value.push({ id })
 
-  // Remove after 600ms
   setTimeout(() => {
     floatUps.value = floatUps.value.filter(f => f.id !== id)
   }, 600)
 }
-
-
 </script>
+
 
 
 
