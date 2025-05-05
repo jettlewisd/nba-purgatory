@@ -136,7 +136,7 @@ export const buttonEvents = [
     {
         label: "Shoplift from the Team Shop",
         tagline: "all you got was a Rudy Gobert jersey :/",
-        tier: "chaotic",
-        outcomes: [{ chance: 1.0, effect: { money: 5, regret: 12 } }]
+        tier: "fixed",
+        outcomes: [{ chance: 1.0, effect: { money: 5, regret: 12, hype: -10 } }]
     }
 ];

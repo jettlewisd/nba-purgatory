@@ -19,13 +19,16 @@ export const useGameStore = defineStore('game', {
 
     actions: {
         increaseHype(amount) {
-            this.hype += amount
+            this.hype = Math.min(100, this.hype + amount)
         },
         decreaseHype(amount) {
             this.hype = Math.max(0, this.hype - amount)
         },
         addRegret(amount) {
-            this.regret += amount
+            this.regret = Math.min(100, this.regret + amount)
+        },
+        decreaseRegret(amount) {
+            this.regret = Math.max(0, this.regret - amount)
         },
         spendMoney(amount) {
             this.money = Math.max(0, this.money - amount)
@@ -36,9 +39,7 @@ export const useGameStore = defineStore('game', {
         updateScoreGap(amount) {
             this.scoreGap += amount
         },
-        decreaseRegret(amount) {
-            this.regret = Math.max(0, this.regret - amount)
-        },
+
         increaseUserScore(points) {
             this.userScore += points
         },

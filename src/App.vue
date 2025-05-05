@@ -207,6 +207,7 @@ const lowTier = buttonEvents.filter(e => e.tier === "low");
 const mediumTier = buttonEvents.filter(e => e.tier === "medium");
 const highTier = buttonEvents.filter(e => e.tier === "high");
 const chaoticTier = buttonEvents.filter(e => e.tier === "chaotic");
+const fixedTier = buttonEvents.filter(e => e.tier === "fixed");
 
 const players = [
   { src: shai, name: 'Shai', class: 'animate-chaotic-1' },
@@ -222,11 +223,13 @@ const players = [
 ]
 
 const tierWeights = [
-  { tier: "low", weight: 0.5 },
-  { tier: "medium", weight: 0.3 },
+  { tier: "low", weight: 0.4 },
+  { tier: "medium", weight: 0.25 },
   { tier: "high", weight: 0.15 },
-  { tier: "chaotic", weight: 0.05 }
+  { tier: "chaotic", weight: 0.1 },
+  { tier: "fixed", weight: 0.1 }
 ];
+
 
 onMounted(() => {
   game.time = 15
@@ -267,7 +270,6 @@ onMounted(() => {
     }
   }, 1000)
 
-  // 🔥 Start with the first Beer button
   setTimeout(() => {
     const firstBeer = buttonEvents.find(e => e.label === "Beer?");
     activeButtons.value.push({
@@ -311,7 +313,11 @@ function spawnRandomButton() {
       if (game.quarter < 3) return;
       tierPool = chaoticTier;
       break;
+    case "fixed":
+      tierPool = fixedTier;
+      break;
   }
+
 
   // Filter beer buttons by beerLevel
   tierPool = tierPool.filter(e => {
