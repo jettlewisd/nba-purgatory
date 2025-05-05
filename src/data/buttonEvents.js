@@ -32,7 +32,7 @@ export const buttonEvents = [
             {
                 chance: 0.8,
                 effect: { hype: 5, regret: -5 },
-                tagline: "you made it on SportsCenter 🤩 (but your boss knows you skipped work)"
+                tagline: "you made it on SportsCenter 🤩 (but boss knows you skipped work)"
             },
             {
                 chance: 0.2,
@@ -128,7 +128,7 @@ export const buttonEvents = [
             {
                 chance: 0.2,
                 effect: { hype: 30, regret: -30 },
-                tagline: "you got a selfie with Mr. Clippy... 🫦🫦"
+                tagline: "you got a selfie with Mr. Clippy!... 🫦🫦"
             },
             {
                 chance: 0.8,

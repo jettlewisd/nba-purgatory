@@ -129,7 +129,25 @@
           {{ event.label }}
         </button>
       </div>
+
+      <!-- 📣 Tagline Message Stack (Top-Down Order) -->
+      <div
+        class="absolute bottom-[220px] right-4 w-[320px] flex flex-col items-start justify-start h-[250px] z-[9999] pointer-events-none space-y-1">
+
+        <div v-for="(msg, index) in messages" :key="msg.id" :class="[
+          'bg-white border-2 border-black px-3 py-1 rounded text-red-600 font-bold text-base leading-tight shadow-md',
+          index === 0 ? 'animate-slide-bounce-down' : ''
+        ]" :style="{ opacity: 1 - (index * 0.2), fontSize: '1.25rem' }">
+          {{ msg.text }}
+        </div>
+
+
+
+      </div>
+
     </main>
+
+
 
     <!-- 👑 Courtside Celebs -->
     <div class="absolute bottom-[1%] left-1/2 transform -translate-x-1/2 flex justify-center gap-x-3 z-30 w-[720px]">
@@ -202,6 +220,7 @@ const showGameOver = ref(false)
 const showLukaMessage = ref(false)
 const floatUps = ref([])
 const isBallPopped = ref(false)
+const messages = ref([])
 
 const lowTier = buttonEvents.filter(e => e.tier === "low");
 const mediumTier = buttonEvents.filter(e => e.tier === "medium");
@@ -319,7 +338,6 @@ function spawnRandomButton() {
   }
 
 
-  // Filter beer buttons by beerLevel
   tierPool = tierPool.filter(e => {
     if (e.beerLevelRequired === undefined) return true;
     return e.beerLevelRequired === game.beerLevel;
@@ -366,11 +384,13 @@ function handleButtonClick(event) {
       if (outcome.effect.money) {
         game.spendMoney(-outcome.effect.money)
       }
+
+      showMessage(outcome.tagline)
+
       break
     }
   }
 
-  // 🧃 Unlock next beer level if a beer was clicked
   if (event.beerLevelRequired !== undefined) {
     game.unlockNextBeer();
   }
@@ -396,6 +416,18 @@ function handleBallClick() {
     floatUps.value = floatUps.value.filter(f => f.id !== id)
   }, 600)
 }
+
+function showMessage(tagline) {
+  const id = Date.now() + Math.random()
+  messages.value.unshift({ id, text: tagline })
+
+  if (messages.value.length > 5) {
+    messages.value.pop()
+  }
+}
+
+
+
 </script>
 
 
@@ -841,5 +873,29 @@ function handleBallClick() {
 
 .animate-float-up {
   animation: float-up 0.6s ease-out forwards;
+}
+
+@keyframes slide-bounce-down {
+  0% {
+    transform: translateY(-60%);
+    opacity: 0;
+  }
+
+  50% {
+    transform: translateY(10%);
+    opacity: 1;
+  }
+
+  70% {
+    transform: translateY(-4%);
+  }
+
+  100% {
+    transform: translateY(0%);
+  }
+}
+
+.animate-slide-bounce-down {
+  animation: slide-bounce-down 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 </style>
