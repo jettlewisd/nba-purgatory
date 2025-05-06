@@ -221,15 +221,15 @@ const showLukaMessage = ref(false)
 const floatUps = ref([])
 const isBallPopped = ref(false)
 const messages = ref([])
-const outcomeIndexes = reactive({});
+const outcomeIndexes = reactive({})
 
-const shownButtonsGlobal = reactive(new Set());
+const shownButtonsGlobal = reactive(new Set())
+const beerSequencePlayed = ref(false)
+const buttonSpawningPaused = ref(false)
+let totalBeerButtons = 5
+let beerClicks = 0
 
-const lowTier = buttonEvents.filter(e => e.tier === "low");
-const mediumTier = buttonEvents.filter(e => e.tier === "medium");
-const highTier = buttonEvents.filter(e => e.tier === "high");
-const chaoticTier = buttonEvents.filter(e => e.tier === "chaotic");
-const fixedTier = buttonEvents.filter(e => e.tier === "fixed");
+let buttonInterval = null // NEW: track interval globally
 
 const players = [
   { src: shai, name: 'Shai', class: 'animate-chaotic-1' },
@@ -244,15 +244,6 @@ const players = [
   { src: jimmy, name: 'Jimmy', class: 'animate-chaotic-10' },
 ]
 
-const tierWeights = [
-  { tier: "low", weight: 0.2 },
-  { tier: "medium", weight: 0.2 },
-  { tier: "high", weight: 0.2 },
-  { tier: "chaotic", weight: 0.2 },
-  { tier: "fixed", weight: 0.2 }
-]
-
-
 onMounted(() => {
   game.time = 40
 
@@ -264,6 +255,11 @@ onMounted(() => {
         game.advanceQuarter()
         game.time = 40
         showQuarterOver.value = true
+
+        if (game.quarter === 2 && !beerSequencePlayed.value) {
+          beerSequencePlayed.value = true
+          spawnBeerSequence()
+        }
 
         if (game.quarter === 3 && !game.lukaTraded) {
           game.lukaTraded = true
@@ -283,26 +279,12 @@ onMounted(() => {
       }
     }
 
-    if (game.hype > 75) {
-      game.increaseUserScore(1)
-    }
-
-    if (game.hype < 20) {
-      game.increaseThemScore(1)
-    }
+    if (game.hype > 75) game.increaseUserScore(1)
+    if (game.hype < 20) game.increaseThemScore(1)
   }, 1000)
 
-  setTimeout(() => {
-    const firstBeer = buttonEvents.find(e => e.label === "Beer?");
-    activeButtons.value.push({
-      id: Date.now() + Math.random(),
-      ...firstBeer,
-      top: Math.random() * 60 + 10,
-      left: Math.random() * 80 + 10,
-    });
-  }, 1000)
-
-  const buttonInterval = setInterval(() => {
+  // ACTUAL START of non-beer button spawns
+  buttonInterval = setInterval(() => {
     spawnRandomButton()
   }, 4000)
 
@@ -312,129 +294,138 @@ onMounted(() => {
   })
 })
 
-function spawnRandomButton() {
-  const rand = Math.random();
-  let chosenTier = "low";
-  let cumulative = 0;
+function spawnBeerSequence() {
+  clearInterval(buttonInterval)
+  buttonSpawningPaused.value = true
 
-  for (const { tier, weight } of tierWeights) {
-    cumulative += weight;
-    if (rand < cumulative) {
-      chosenTier = tier;
-      break;
+  const beerButtons = buttonEvents
+    .filter(e => e.label.includes("Beer"))
+    .sort((a, b) => (a.beerLevelRequired ?? 0) - (b.beerLevelRequired ?? 0))
+
+  let currentBeerIndex = 0
+
+  function spawnNextBeer() {
+    if (currentBeerIndex >= beerButtons.length) {
+      // All beers done
+      setTimeout(() => {
+        buttonSpawningPaused.value = false
+        buttonInterval = setInterval(spawnRandomButton, 4000)
+      }, 3000)
+      return
     }
+
+    const beer = beerButtons[currentBeerIndex]
+    const id = Date.now() + Math.random()
+
+    activeButtons.value.push({
+      id,
+      ...beer,
+      top: Math.random() * 60 + 10,
+      left: Math.random() * 80 + 10
+    })
+
+    shownButtonsGlobal.add(beer.label)
+    game.unlockNextBeer()
+
+    // Wait for click to spawn next (handled below)
+    currentBeerIndex++
   }
 
-  let tierPool = [];
-
-  switch (chosenTier) {
-    case "low": tierPool = lowTier; break;
-    case "medium": tierPool = mediumTier; break;
-    case "high": tierPool = highTier; break;
-    case "chaotic":
-      tierPool = chaoticTier;
-      break;
-
-    case "fixed":
-      tierPool = fixedTier;
-      break;
+  // Wrap actual spawn in a delay
+  function delayedSpawnNextBeer() {
+    setTimeout(() => {
+      spawnNextBeer()
+    }, 2000) // 2 seconds between clicks and next spawn
   }
 
+  // Kick off the chain
+  delayedSpawnNextBeer()
 
-  tierPool = tierPool.filter(e => {
-    if (e.beerLevelRequired === undefined) return true;
-    return e.beerLevelRequired === game.beerLevel;
-  });
+  // Make it accessible globally for click handler
+  window.__spawnNextBeer = delayedSpawnNextBeer
 
-  if (tierPool.length === 0) return;
+}
 
-  // Filter out buttons already shown globally
-  const unseenButtons = tierPool.filter(event => !shownButtonsGlobal.has(event.label));
 
-  // Reset global tracking if all buttons have been shown
-  if (shownButtonsGlobal.size >= buttonEvents.length) {
-    shownButtonsGlobal.clear();
+function spawnRandomButton() {
+  if (buttonSpawningPaused.value) return
+
+  const eligible = buttonEvents.filter(e => {
+    // Block all beer buttons from random spawn, always
+    if (e.label.includes("Beer")) return false
+    return e.beerLevelRequired === undefined || e.beerLevelRequired === game.beerLevel
+  })
+
+  const unseen = eligible.filter(e => !shownButtonsGlobal.has(e.label))
+
+  if (unseen.length === 0) {
+    shownButtonsGlobal.clear()
+    return spawnRandomButton()
   }
 
-  // Choose from remaining unseen, or fallback if needed
-  const pool = unseenButtons.length > 0 ? unseenButtons : tierPool;
-  const randomIndex = Math.floor(Math.random() * pool.length);
-  const randomEvent = pool[randomIndex];
-
-  // Track this one globally
-  shownButtonsGlobal.add(randomEvent.label);
-
-
-  if (randomEvent.label === "Rage Chant!!" && !game.lukaTraded) return;
-
-  const id = Date.now() + Math.random();
+  const randomEvent = unseen[Math.floor(Math.random() * unseen.length)]
+  const id = Date.now() + Math.random()
 
   activeButtons.value.push({
     id,
     ...randomEvent,
     top: Math.random() * 60 + 10,
-    left: Math.random() * 80 + 10,
-  });
+    left: Math.random() * 80 + 10
+  })
+
+  shownButtonsGlobal.add(randomEvent.label)
 
   setTimeout(() => {
-    activeButtons.value = activeButtons.value.filter(btn => btn.id !== id);
-  }, 4000);
+    activeButtons.value = activeButtons.value.filter(btn => btn.id !== id)
+  }, 4000)
 }
+
 
 function handleButtonClick(event) {
   if (event.cost) {
     game.spendMoney(event.cost)
   }
 
-  let outcome;
+  let outcome
 
-  // Use deterministic rotation for multi-outcome buttons
   if (event.outcomes.length > 1) {
-    const label = event.label;
-
+    const label = event.label
     if (!(label in outcomeIndexes)) {
-      outcomeIndexes[label] = 0;
+      outcomeIndexes[label] = 0
     }
-
-    const index = outcomeIndexes[label];
-    outcome = event.outcomes[index];
-
-    outcomeIndexes[label] = (index + 1) % event.outcomes.length;
+    const index = outcomeIndexes[label]
+    outcome = event.outcomes[index]
+    outcomeIndexes[label] = (index + 1) % event.outcomes.length
   } else {
-    // Random selection for single-outcome buttons
-    const roll = Math.random();
-    let cumulativeChance = 0;
-
+    const roll = Math.random()
+    let cumulativeChance = 0
     for (const o of event.outcomes) {
-      cumulativeChance += o.chance;
+      cumulativeChance += o.chance
       if (roll <= cumulativeChance) {
-        outcome = o;
-        break;
+        outcome = o
+        break
       }
     }
   }
 
   if (outcome) {
-    if (outcome.effect.hype) {
-      game.increaseHype(outcome.effect.hype)
-    }
-    if (outcome.effect.regret) {
-      game.addRegret(outcome.effect.regret)
-    }
-    if (outcome.effect.money) {
-      game.spendMoney(-outcome.effect.money)
-    }
-
+    if (outcome.effect.hype) game.increaseHype(outcome.effect.hype)
+    if (outcome.effect.regret) game.addRegret(outcome.effect.regret)
+    if (outcome.effect.money) game.spendMoney(-outcome.effect.money)
     showMessage(outcome.tagline)
   }
 
+  if (event.label.includes("Beer") && typeof window.__spawnNextBeer === 'function') {
+    window.__spawnNextBeer()
+  }
+
+
   if (event.beerLevelRequired !== undefined) {
-    game.unlockNextBeer();
+    game.unlockNextBeer()
   }
 
   activeButtons.value = activeButtons.value.filter(btn => btn.id !== event.id)
 }
-
 
 function handleBallClick() {
   game.increaseUserScore(1)
@@ -463,8 +454,11 @@ function showMessage(tagline) {
     messages.value.pop()
   }
 }
-
 </script>
+
+
+
+
 
 
 
