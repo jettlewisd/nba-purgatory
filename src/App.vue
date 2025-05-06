@@ -133,16 +133,13 @@
       <!-- 📣 Tagline Message Stack (Top-Down Order) -->
       <div
         class="absolute bottom-[220px] right-4 w-[320px] flex flex-col items-start justify-start h-[250px] z-[9999] pointer-events-none space-y-1">
-
         <div v-for="(msg, index) in messages" :key="msg.id" :class="[
-          'bg-white border-2 border-black px-3 py-1 rounded text-red-600 font-bold text-base leading-tight shadow-md',
+          'bg-white border-2 border-black px-3 py-1 rounded font-bold text-base leading-tight shadow-md',
+          msg.color,
           index === 0 ? 'animate-slide-bounce-down' : ''
         ]" :style="{ opacity: 1 - (index * 0.2), fontSize: '1.25rem' }">
           {{ msg.text }}
         </div>
-
-
-
       </div>
 
     </main>
@@ -412,8 +409,22 @@ function handleButtonClick(event) {
     if (outcome.effect.hype) game.increaseHype(outcome.effect.hype)
     if (outcome.effect.regret) game.addRegret(outcome.effect.regret)
     if (outcome.effect.money) game.spendMoney(-outcome.effect.money)
-    showMessage(outcome.tagline)
+
+    // Determine if this outcome is considered "positive"
+    let isPositive =
+      (outcome.effect.hype > 0 || outcome.effect.money > 0 || outcome.effect.regret < 0)
+
+    // Special handling for beer buttons
+    if (event.label === "Another Beer?" && event.beerLevelRequired >= 3) {
+      isPositive = false
+    }
+    if (event.label === "Beer?" || (event.label === "Another Beer?" && event.beerLevelRequired < 3)) {
+      isPositive = true
+    }
+
+    showMessage(outcome.tagline, isPositive)
   }
+
 
   if (event.label.includes("Beer") && typeof window.__spawnNextBeer === 'function') {
     window.__spawnNextBeer()
@@ -446,14 +457,16 @@ function handleBallClick() {
   }, 600)
 }
 
-function showMessage(tagline) {
+function showMessage(tagline, isPositive = false) {
   const id = Date.now() + Math.random()
-  messages.value.unshift({ id, text: tagline })
+  const color = isPositive ? 'text-green-600' : 'text-red-600'
+  messages.value.unshift({ id, text: tagline, color })
 
   if (messages.value.length > 5) {
     messages.value.pop()
   }
 }
+
 </script>
 
 
