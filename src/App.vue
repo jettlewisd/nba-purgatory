@@ -176,7 +176,7 @@
 
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, reactive } from 'vue'
 import { useGameStore } from './stores/game'
 import { buttonEvents } from './data/buttonEvents'
 
@@ -221,6 +221,9 @@ const showLukaMessage = ref(false)
 const floatUps = ref([])
 const isBallPopped = ref(false)
 const messages = ref([])
+const outcomeIndexes = reactive({});
+
+const shownButtonsGlobal = reactive(new Set());
 
 const lowTier = buttonEvents.filter(e => e.tier === "low");
 const mediumTier = buttonEvents.filter(e => e.tier === "medium");
@@ -242,16 +245,16 @@ const players = [
 ]
 
 const tierWeights = [
-  { tier: "low", weight: 0.4 },
-  { tier: "medium", weight: 0.25 },
-  { tier: "high", weight: 0.15 },
-  { tier: "chaotic", weight: 0.1 },
-  { tier: "fixed", weight: 0.1 }
-];
+  { tier: "low", weight: 0.2 },
+  { tier: "medium", weight: 0.2 },
+  { tier: "high", weight: 0.2 },
+  { tier: "chaotic", weight: 0.2 },
+  { tier: "fixed", weight: 0.2 }
+]
 
 
 onMounted(() => {
-  game.time = 15
+  game.time = 40
 
   const gameInterval = setInterval(() => {
     if (game.time > 0) {
@@ -259,7 +262,7 @@ onMounted(() => {
     } else {
       if (game.quarter < 4) {
         game.advanceQuarter()
-        game.time = 15
+        game.time = 40
         showQuarterOver.value = true
 
         if (game.quarter === 3 && !game.lukaTraded) {
@@ -329,9 +332,9 @@ function spawnRandomButton() {
     case "medium": tierPool = mediumTier; break;
     case "high": tierPool = highTier; break;
     case "chaotic":
-      if (game.quarter < 3) return;
       tierPool = chaoticTier;
       break;
+
     case "fixed":
       tierPool = fixedTier;
       break;
@@ -345,8 +348,22 @@ function spawnRandomButton() {
 
   if (tierPool.length === 0) return;
 
-  const randomIndex = Math.floor(Math.random() * tierPool.length);
-  const randomEvent = tierPool[randomIndex];
+  // Filter out buttons already shown globally
+  const unseenButtons = tierPool.filter(event => !shownButtonsGlobal.has(event.label));
+
+  // Reset global tracking if all buttons have been shown
+  if (shownButtonsGlobal.size >= buttonEvents.length) {
+    shownButtonsGlobal.clear();
+  }
+
+  // Choose from remaining unseen, or fallback if needed
+  const pool = unseenButtons.length > 0 ? unseenButtons : tierPool;
+  const randomIndex = Math.floor(Math.random() * pool.length);
+  const randomEvent = pool[randomIndex];
+
+  // Track this one globally
+  shownButtonsGlobal.add(randomEvent.label);
+
 
   if (randomEvent.label === "Rage Chant!!" && !game.lukaTraded) return;
 
@@ -369,26 +386,46 @@ function handleButtonClick(event) {
     game.spendMoney(event.cost)
   }
 
-  const roll = Math.random()
-  let cumulativeChance = 0
+  let outcome;
 
-  for (const outcome of event.outcomes) {
-    cumulativeChance += outcome.chance
-    if (roll <= cumulativeChance) {
-      if (outcome.effect.hype) {
-        game.increaseHype(outcome.effect.hype)
-      }
-      if (outcome.effect.regret) {
-        game.addRegret(outcome.effect.regret)
-      }
-      if (outcome.effect.money) {
-        game.spendMoney(-outcome.effect.money)
-      }
+  // Use deterministic rotation for multi-outcome buttons
+  if (event.outcomes.length > 1) {
+    const label = event.label;
 
-      showMessage(outcome.tagline)
-
-      break
+    if (!(label in outcomeIndexes)) {
+      outcomeIndexes[label] = 0;
     }
+
+    const index = outcomeIndexes[label];
+    outcome = event.outcomes[index];
+
+    outcomeIndexes[label] = (index + 1) % event.outcomes.length;
+  } else {
+    // Random selection for single-outcome buttons
+    const roll = Math.random();
+    let cumulativeChance = 0;
+
+    for (const o of event.outcomes) {
+      cumulativeChance += o.chance;
+      if (roll <= cumulativeChance) {
+        outcome = o;
+        break;
+      }
+    }
+  }
+
+  if (outcome) {
+    if (outcome.effect.hype) {
+      game.increaseHype(outcome.effect.hype)
+    }
+    if (outcome.effect.regret) {
+      game.addRegret(outcome.effect.regret)
+    }
+    if (outcome.effect.money) {
+      game.spendMoney(-outcome.effect.money)
+    }
+
+    showMessage(outcome.tagline)
   }
 
   if (event.beerLevelRequired !== undefined) {
@@ -397,6 +434,7 @@ function handleButtonClick(event) {
 
   activeButtons.value = activeButtons.value.filter(btn => btn.id !== event.id)
 }
+
 
 function handleBallClick() {
   game.increaseUserScore(1)
@@ -425,8 +463,6 @@ function showMessage(tagline) {
     messages.value.pop()
   }
 }
-
-
 
 </script>
 

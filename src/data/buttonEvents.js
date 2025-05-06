@@ -144,7 +144,7 @@ export const buttonEvents = [
             {
                 chance: 1.0,
                 effect: { hype: 5, regret: -5 },
-                tagline: "he winked at me 🫦"
+                tagline: "he winked back 🫦"
             }
         ]
     },
