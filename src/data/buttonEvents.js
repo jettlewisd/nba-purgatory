@@ -2,13 +2,21 @@ export const buttonEvents = [
 
     {
         label: "Post Pics to Insta",
-        tagline: "a cool 7 likes 😎",
         tier: "low",
         outcomes: [
-            { chance: 0.8, effect: { hype: 5, regret: -5 } },
-            { chance: 0.2, effect: { hype: -5, regret: 5 } }
+            {
+                chance: 0.8,
+                effect: { hype: 5, regret: -5 },
+                tagline: "a cool 7 likes 😎"
+            },
+            {
+                chance: 0.2,
+                effect: { hype: -5, regret: 5 },
+                tagline: "you tagged your ex by accident 💀"
+            }
         ]
     },
+
     {
         label: "Dance Cam!",
         tier: "low",
@@ -32,7 +40,7 @@ export const buttonEvents = [
             {
                 chance: 0.8,
                 effect: { hype: 5, regret: -5 },
-                tagline: "you made it on SportsCenter 🤩 (but boss knows you skipped work)"
+                tagline: "you made it on ESPN 🤩 (boss knows you skipped work)"
             },
             {
                 chance: 0.2,
@@ -96,12 +104,12 @@ export const buttonEvents = [
             {
                 chance: 0.35,
                 effect: { hype: 20, regret: -20 },
-                tagline: "congrats on getting THE Trendon Watford's signature!"
+                tagline: "congrats on getting THE Trendon Watford's signature!😆"
             },
             {
                 chance: 0.65,
                 effect: { hype: -20, regret: 20 },
-                tagline: "congrats on getting THE Trendon Watford's signature!"
+                tagline: "congrats on getting THE Trendon Watford's signature!💀"
             }
         ]
     },
@@ -234,7 +242,7 @@ export const buttonEvents = [
             {
                 chance: 1.0,
                 effect: { money: -3, hype: 4, regret: -5 },
-                tagline: "oh yeah let's go baby"
+                tagline: "oh yea let's go baby"
             }
         ]
     },
@@ -268,12 +276,12 @@ export const buttonEvents = [
         beerLevelRequired: 4,
         outcomes: [
             {
-                chance: 0.3,
+                chance: 0.5,
                 effect: { money: -3, hype: 8, regret: -10 },
-                tagline: "Zzzzz"
+                tagline: "ZZzzzzzzzz"
             },
             {
-                chance: 0.7,
+                chance: 0.5,
                 effect: { money: -3, hype: -12, regret: 12 },
                 tagline: "phone = lost"
             }

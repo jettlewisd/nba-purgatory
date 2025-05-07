@@ -92,7 +92,6 @@
 
 
 
-
     <!-- 🏟️ Court (Floating Buttons / Overlays) -->
     <main class="relative w-full h-full overflow-hidden">
       <div v-if="showChantOverlay"
@@ -112,19 +111,13 @@
 
       <div v-if="showLukaMessage"
         class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-400 text-black px-8 py-4 rounded shadow-lg text-3xl font-bold z-50 text-center max-w-[80%] leading-snug">
-        Luka traded at the half!!<br />
-        Texas is on fire...<br />
-        also your regret increases.
+        Luka traded at the half!!
       </div>
 
       <div v-for="(event, index) in activeButtons" :key="event.id" class="absolute animate-float-chaotic z-40"
         :style="{ top: event.top + '%', left: event.left + '%' }">
         <button :class="[
-          'font-bold py-2 px-4 rounded transition m-2 border-2',
-          event.tier === 'low' && 'bg-pink-200 hover:bg-pink-300 text-black border-black',
-          event.tier === 'medium' && 'bg-pink-400 hover:bg-pink-500 text-black border-black',
-          event.tier === 'high' && 'bg-pink-600 hover:bg-pink-700 text-white border-black',
-          event.tier === 'chaotic' && 'bg-pink-800 hover:bg-pink-900 text-white border-black'
+          'font-bold py-2 px-4 rounded transition m-2 border-2 bg-pink-500 hover:bg-pink-700 text-white border-white glow-button'
         ]" @click="handleButtonClick(event)">
           {{ event.label }}
         </button>
@@ -244,6 +237,13 @@ const players = [
 onMounted(() => {
   game.time = 40
 
+  // Randomize start index for multi-outcome buttons
+  buttonEvents.forEach(event => {
+    if (event.outcomes.length > 1) {
+      outcomeIndexes[event.label] = Math.floor(Math.random() * event.outcomes.length)
+    }
+  })
+
   const gameInterval = setInterval(() => {
     if (game.time > 0) {
       game.time--
@@ -265,7 +265,7 @@ onMounted(() => {
           showQuarterOver.value = false
           setTimeout(() => {
             showLukaMessage.value = false
-          }, 5000)
+          }, 2000)
         }
 
         setTimeout(() => {
@@ -276,11 +276,13 @@ onMounted(() => {
       }
     }
 
-    if (game.hype > 75) game.increaseUserScore(1)
-    if (game.hype < 20) game.increaseThemScore(1)
+    if (game.hype >= 67) {
+      game.increaseUserScore(1)
+    } else if (game.hype <= 33) {
+      game.increaseThemScore(1)
+    }
   }, 1000)
 
-  // ACTUAL START of non-beer button spawns
   buttonInterval = setInterval(() => {
     spawnRandomButton()
   }, 4000)
@@ -306,7 +308,7 @@ function spawnBeerSequence() {
       // All beers done
       setTimeout(() => {
         buttonSpawningPaused.value = false
-        buttonInterval = setInterval(spawnRandomButton, 4000)
+        buttonInterval = setInterval(spawnRandomButton, 2000)
       }, 3000)
       return
     }
@@ -318,7 +320,7 @@ function spawnBeerSequence() {
       id,
       ...beer,
       top: Math.random() * 60 + 10,
-      left: Math.random() * 80 + 10
+      left: Math.random() * 60 + 5
     })
 
     shownButtonsGlobal.add(beer.label)
@@ -367,7 +369,7 @@ function spawnRandomButton() {
     id,
     ...randomEvent,
     top: Math.random() * 60 + 10,
-    left: Math.random() * 80 + 10
+    left: Math.random() * 60 + 5
   })
 
   shownButtonsGlobal.add(randomEvent.label)
@@ -376,6 +378,20 @@ function spawnRandomButton() {
     activeButtons.value = activeButtons.value.filter(btn => btn.id !== id)
   }, 4000)
 }
+
+const redFixedLabels = new Set([
+  "Venmo Devin Booker – \"Do something\"",
+  "Heckle Detroit",
+  "Shoplift from the Team Shop",
+])
+
+const greenFixedLabels = new Set([
+  "Blow Kiss at Kelly Oubre",
+  "“LETS GO [your fav team]”",
+  "Nachos?",
+  "Moss a Kid for a T-Shirt",
+  "Beer?",
+])
 
 
 function handleButtonClick(event) {
@@ -414,22 +430,37 @@ function handleButtonClick(event) {
     let isPositive =
       (outcome.effect.hype > 0 || outcome.effect.money > 0 || outcome.effect.regret < 0)
 
-    // Special handling for beer buttons
-    if (event.label === "Another Beer?" && event.beerLevelRequired >= 3) {
+    // 🔧 Override for fixed buttons using curated vibes
+    if (redFixedLabels.has(event.label)) {
       isPositive = false
-    }
-    if (event.label === "Beer?" || (event.label === "Another Beer?" && event.beerLevelRequired < 3)) {
+    } else if (greenFixedLabels.has(event.label)) {
       isPositive = true
     }
+
+    // 🍺 Special handling for beer buttons
+    if (event.label.includes("Beer")) {
+      const level = event.beerLevelRequired
+
+      if (event.label === "Beer?") {
+        isPositive = true
+      } else if (event.label === "Another Beer?") {
+        if (level === 1 || level === 2) {
+          isPositive = true
+        } else if (level === 3) {
+          isPositive = false
+        } else if (level === 4) {
+          isPositive = (outcome.tagline === "ZZzzzzzzzz")
+        }
+      }
+    }
+
 
     showMessage(outcome.tagline, isPositive)
   }
 
-
   if (event.label.includes("Beer") && typeof window.__spawnNextBeer === 'function') {
     window.__spawnNextBeer()
   }
-
 
   if (event.beerLevelRequired !== undefined) {
     game.unlockNextBeer()
@@ -437,6 +468,7 @@ function handleButtonClick(event) {
 
   activeButtons.value = activeButtons.value.filter(btn => btn.id !== event.id)
 }
+
 
 function handleBallClick() {
   game.increaseUserScore(1)
@@ -940,5 +972,22 @@ function showMessage(tagline, isPositive = false) {
 
 .animate-slide-bounce-down {
   animation: slide-bounce-down 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.glow-button {
+  box-shadow: 0 0 8px rgba(255, 105, 180, 0.8), 0 0 12px rgba(255, 105, 180, 0.6);
+  animation: glow-pulse 2s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(255, 105, 180, 0.8), 0 0 12px rgba(255, 105, 180, 0.6);
+  }
+
+  50% {
+    box-shadow: 0 0 16px rgba(255, 105, 180, 1), 0 0 24px rgba(255, 105, 180, 0.8);
+  }
 }
 </style>
