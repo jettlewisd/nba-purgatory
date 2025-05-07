@@ -6,16 +6,21 @@
     <div class="absolute w-[65px] h-[65px] z-50 animate-bounce-dvd flex items-center justify-center"
       @click="handleBallClick">
 
-      <img :src="bball" alt="Floating Ball" class="w-[70px] h-[70px] object-contain" :class="{ 'pop': isBallPopped }"
-        draggable="false" />
+      <img :src="bball" alt="Floating Ball" class="w-[70px] h-[70px] object-contain" :class="[
+        { 'pop': isBallPopped },
+        { 'turnover-flash': isTurnoverPeriod }
+      ]" draggable="false" />
+
 
       <!-- Float-Ups appear centered over the ball -->
-      <div v-for="float in floatUps" :key="float.id"
-        class="absolute text-pink-400 text-2xl font-bold pointer-events-none animate-float-up z-60"
-        style="top: 0; left: 0; transform: translate(-50%, -50%)">
-        +1
+      <div v-for="float in floatUps" :key="float.id" :class="[
+        'absolute text-2xl font-bold pointer-events-none animate-float-up z-60',
+        float.isTurnover ? 'text-red-500' : 'text-green-600'
+      ]" style="top: 0; left: 0; transform: translate(-50%, -50%)">
+        {{ float.text }}
       </div>
     </div>
+
 
     <!-- Floating Players -->
     <img v-for="(player, idx) in players" :key="idx" :src="player.src" :alt="player.name" :class="player.class"
@@ -29,20 +34,27 @@
       <div class="w-[80%] mx-auto mt-4 mb-3 relative">
         <p class="text-center text-sm font-bold mb-1 tracking-widest">REGRET</p>
 
-        <!-- Solid Color Thirds: Red | Blue | Green -->
+        <!-- Regret Meter (Clean Pill) -->
         <div class="w-full h-6 rounded-full overflow-hidden flex border-2 border-black relative">
           <div class="w-1/3 bg-red-600"></div>
           <div class="w-1/3 bg-blue-400"></div>
           <div class="w-1/3 bg-green-600"></div>
 
-          <!-- ▼ Indicator (flipped: more regret = left) -->
-          <div
-            class="absolute top-1/2 -translate-y-1/2 text-black text-lg pointer-events-none transition-all duration-200"
-            :style="{ left: `${100 - Math.min(100, Math.max(0, game.regret))}%`, transform: 'translate(-50%, -50%)' }">
-            ▼
-          </div>
         </div>
+
+        <!-- ▼ Indicator (flipped: more regret = left) -->
+        <div
+          class="absolute top-1/2 -translate-y-1/2 text-black text-lg pointer-events-none transition-all duration-200"
+          :style="{ left: `${100 - Math.min(100, Math.max(0, game.regret))}%`, transform: 'translateX(-50%)' }">
+          ▼
+        </div>
+
+
+
+
+
       </div>
+
 
 
 
@@ -104,6 +116,12 @@
         Quarter Over!
       </div>
 
+      <div v-if="isTurnoverPeriod"
+        class="absolute top-[25%] inset-x-0 mx-auto w-fit bg-black text-red-500 border-4 border-white px-8 py-4 rounded-xl shadow-2xl text-4xl font-extrabold z-[9999] animate-pulse pointer-events-none mix-blend-difference tracking-widest text-center">
+        LeTURNOVER‼ 😟
+      </div>
+
+
       <div v-if="showGameOver"
         class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-600 text-white px-8 py-4 rounded shadow-lg text-4xl font-bold z-50">
         GAME OVER
@@ -136,7 +154,6 @@
       </div>
 
     </main>
-
 
 
     <!-- 👑 Courtside Celebs -->
@@ -211,6 +228,7 @@ const showLukaMessage = ref(false)
 const floatUps = ref([])
 const isBallPopped = ref(false)
 const messages = ref([])
+const isTurnoverPeriod = ref(false)
 const outcomeIndexes = reactive({})
 
 const shownButtonsGlobal = reactive(new Set())
@@ -219,7 +237,7 @@ const buttonSpawningPaused = ref(false)
 let totalBeerButtons = 5
 let beerClicks = 0
 
-let buttonInterval = null // NEW: track interval globally
+let buttonInterval = null
 
 const players = [
   { src: shai, name: 'Shai', class: 'animate-chaotic-1' },
@@ -237,7 +255,6 @@ const players = [
 onMounted(() => {
   game.time = 40
 
-  // Randomize start index for multi-outcome buttons
   buttonEvents.forEach(event => {
     if (event.outcomes.length > 1) {
       outcomeIndexes[event.label] = Math.floor(Math.random() * event.outcomes.length)
@@ -256,6 +273,17 @@ onMounted(() => {
         if (game.quarter === 2 && !beerSequencePlayed.value) {
           beerSequencePlayed.value = true
           spawnBeerSequence()
+        }
+
+        // Trigger turnover at start of Q2–Q4
+        if (game.quarter >= 2) {
+          const randomDelay = Math.floor(Math.random() * 25000) + 5000 // Between 5s–30s
+          setTimeout(() => {
+            isTurnoverPeriod.value = true
+            setTimeout(() => {
+              isTurnoverPeriod.value = false
+            }, 5000)
+          }, randomDelay)
         }
 
         if (game.quarter === 3 && !game.lukaTraded) {
@@ -305,7 +333,6 @@ function spawnBeerSequence() {
 
   function spawnNextBeer() {
     if (currentBeerIndex >= beerButtons.length) {
-      // All beers done
       setTimeout(() => {
         buttonSpawningPaused.value = false
         buttonInterval = setInterval(spawnRandomButton, 2000)
@@ -326,31 +353,23 @@ function spawnBeerSequence() {
     shownButtonsGlobal.add(beer.label)
     game.unlockNextBeer()
 
-    // Wait for click to spawn next (handled below)
     currentBeerIndex++
   }
 
-  // Wrap actual spawn in a delay
   function delayedSpawnNextBeer() {
     setTimeout(() => {
       spawnNextBeer()
-    }, 2000) // 2 seconds between clicks and next spawn
+    }, 2000)
   }
 
-  // Kick off the chain
   delayedSpawnNextBeer()
-
-  // Make it accessible globally for click handler
   window.__spawnNextBeer = delayedSpawnNextBeer
-
 }
-
 
 function spawnRandomButton() {
   if (buttonSpawningPaused.value) return
 
   const eligible = buttonEvents.filter(e => {
-    // Block all beer buttons from random spawn, always
     if (e.label.includes("Beer")) return false
     return e.beerLevelRequired === undefined || e.beerLevelRequired === game.beerLevel
   })
@@ -393,7 +412,6 @@ const greenFixedLabels = new Set([
   "Beer?",
 ])
 
-
 function handleButtonClick(event) {
   if (event.cost) {
     game.spendMoney(event.cost)
@@ -426,18 +444,15 @@ function handleButtonClick(event) {
     if (outcome.effect.regret) game.addRegret(outcome.effect.regret)
     if (outcome.effect.money) game.spendMoney(-outcome.effect.money)
 
-    // Determine if this outcome is considered "positive"
     let isPositive =
       (outcome.effect.hype > 0 || outcome.effect.money > 0 || outcome.effect.regret < 0)
 
-    // 🔧 Override for fixed buttons using curated vibes
     if (redFixedLabels.has(event.label)) {
       isPositive = false
     } else if (greenFixedLabels.has(event.label)) {
       isPositive = true
     }
 
-    // 🍺 Special handling for beer buttons
     if (event.label.includes("Beer")) {
       const level = event.beerLevelRequired
 
@@ -454,7 +469,6 @@ function handleButtonClick(event) {
       }
     }
 
-
     showMessage(outcome.tagline, isPositive)
   }
 
@@ -469,8 +483,25 @@ function handleButtonClick(event) {
   activeButtons.value = activeButtons.value.filter(btn => btn.id !== event.id)
 }
 
-
 function handleBallClick() {
+  const id = Date.now() + Math.random()
+  const isTurnover = isTurnoverPeriod.value
+
+  floatUps.value.push({
+    id,
+    text: isTurnover ? '+10' : '+1',
+    isTurnover,
+  })
+
+  setTimeout(() => {
+    floatUps.value = floatUps.value.filter(f => f.id !== id)
+  }, 600)
+
+  if (isTurnover) {
+    game.increaseThemScore(10)
+    return
+  }
+
   game.increaseUserScore(1)
 
   isBallPopped.value = false
@@ -480,13 +511,6 @@ function handleBallClick() {
       isBallPopped.value = false
     }, 150)
   })
-
-  const id = Date.now() + Math.random()
-  floatUps.value.push({ id })
-
-  setTimeout(() => {
-    floatUps.value = floatUps.value.filter(f => f.id !== id)
-  }, 600)
 }
 
 function showMessage(tagline, isPositive = false) {
@@ -500,6 +524,7 @@ function showMessage(tagline, isPositive = false) {
 }
 
 </script>
+
 
 
 
@@ -989,5 +1014,36 @@ function showMessage(tagline, isPositive = false) {
   50% {
     box-shadow: 0 0 16px rgba(255, 105, 180, 1), 0 0 24px rgba(255, 105, 180, 0.8);
   }
+}
+
+
+.turnover-flash {
+  animation: turnover-flash 0.3s step-start infinite;
+}
+
+@keyframes turnover-flash {
+  50% {
+    filter: brightness(2);
+  }
+
+  100% {
+    filter: none;
+  }
+}
+
+@keyframes chaotic-pulse {
+
+  0%,
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+
+  50% {
+    transform: scale(1.1) rotate(-2deg);
+  }
+}
+
+.animate-pulse {
+  animation: chaotic-pulse 0.6s ease-in-out infinite;
 }
 </style>

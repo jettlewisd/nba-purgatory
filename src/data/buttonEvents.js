@@ -254,7 +254,7 @@ export const buttonEvents = [
             {
                 chance: 1.0,
                 effect: { money: -3, hype: 5, regret: -5 },
-                tagline: "yyyEEAH I LUV U LEBRON!!"
+                tagline: "yyyEEAH I LUV U JIMMY!!"
             }
         ]
     },
