@@ -114,7 +114,7 @@
     <main class="relative w-full h-full overflow-hidden">
 
       <div v-if="showQuarterOver"
-        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-400 text-black px-8 py-4 rounded shadow-lg text-3xl font-bold z-50">
+        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-400 text-black px-8 py-4 rounded shadow-lg text-3xl font-bold z-50 border-black border-4">
         Quarter Over!
       </div>
 
@@ -130,7 +130,7 @@
       </div>
 
       <div v-if="showLukaMessage"
-        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-400 text-black px-8 py-4 rounded shadow-lg text-3xl font-bold z-50 text-center max-w-[80%] leading-snug">
+        class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-400 text-black px-8 py-4 rounded shadow-lg text-3xl font-bold z-50 text-center max-w-[80%] leading-snug border-black border-4">
         Luka traded at the half!!
       </div>
 
@@ -231,7 +231,7 @@ const isBallPopped = ref(false)
 const messages = ref([])
 const isTurnoverPeriod = ref(false)
 const outcomeIndexes = reactive({})
-const hypeFlashColor = ref(null)  // 'green' or 'red' or null
+const hypeFlashColor = ref(null)
 const regretFlashColor = ref(null)
 
 
