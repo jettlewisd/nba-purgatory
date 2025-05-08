@@ -34,13 +34,20 @@
       <div class="w-[80%] mx-auto mt-4 mb-3 relative">
         <p class="text-center text-sm font-bold mb-1 tracking-widest">REGRET</p>
 
-        <!-- Regret Meter (Clean Pill) -->
+        <!-- Regret Meter (Red vs Green with Flashing Overlay) -->
         <div class="w-full h-6 rounded-full overflow-hidden flex border-2 border-black relative">
-          <div class="w-1/3 bg-red-600"></div>
-          <div class="w-1/3 bg-blue-400"></div>
-          <div class="w-1/3 bg-green-600"></div>
+          <!-- Red Half -->
+          <div class="w-1/2 bg-red-600 relative">
+            <div v-if="regretFlashColor === 'red'" class="absolute inset-0 shine-overlay"></div>
+          </div>
 
+          <!-- Green Half -->
+          <div class="w-1/2 bg-green-600 relative">
+            <div v-if="regretFlashColor === 'green'" class="absolute inset-0 shine-overlay"></div>
+          </div>
         </div>
+
+
 
         <!-- ▼ Indicator (flipped: more regret = left) -->
         <div
@@ -48,15 +55,7 @@
           :style="{ left: `${100 - Math.min(100, Math.max(0, game.regret))}%`, transform: 'translateX(-50%)' }">
           ▼
         </div>
-
-
-
-
-
       </div>
-
-
-
 
       <!-- 🌀 HYPE + PILLS ROW -->
       <div class="w-[60%] mx-auto relative left-[-29px] flex items-center justify-between">
@@ -70,11 +69,17 @@
         <div class="flex flex-col items-center w-[60%] relative -top-[16px]">
           <p class="text-sm font-bold mb-1 tracking-widest">HYPE</p>
 
-          <!-- Hype Meter -->
+          <!-- Hype Meter (Red vs Green with Overlay Flashing) -->
           <div class="w-full h-4 rounded-full overflow-hidden flex border-2 border-black relative">
-            <div class="w-1/3 bg-red-600"></div>
-            <div class="w-1/3 bg-blue-400"></div>
-            <div class="w-1/3 bg-green-600"></div>
+            <!-- Red Half -->
+            <div class="w-1/2 bg-red-600 relative">
+              <div v-if="hypeFlashColor === 'red'" class="absolute inset-0 shine-overlay"></div>
+            </div>
+
+            <!-- Green Half -->
+            <div class="w-1/2 bg-green-600 relative">
+              <div v-if="hypeFlashColor === 'green'" class="absolute inset-0 shine-overlay"></div>
+            </div>
 
             <!-- ▼ Indicator -->
             <div
@@ -84,6 +89,7 @@
             </div>
           </div>
         </div>
+
 
 
         <!-- 🏀 SCORE PILL -->
@@ -230,6 +236,9 @@ const isBallPopped = ref(false)
 const messages = ref([])
 const isTurnoverPeriod = ref(false)
 const outcomeIndexes = reactive({})
+const hypeFlashColor = ref(null)  // 'green' or 'red' or null
+const regretFlashColor = ref(null)
+
 
 const shownButtonsGlobal = reactive(new Set())
 const beerSequencePlayed = ref(false)
@@ -304,11 +313,12 @@ onMounted(() => {
       }
     }
 
-    if (game.hype >= 67) {
+    if (game.hype >= 50) {
       game.increaseUserScore(1)
-    } else if (game.hype <= 33) {
+    } else {
       game.increaseThemScore(1)
     }
+
   }, 1000)
 
   buttonInterval = setInterval(() => {
@@ -518,10 +528,21 @@ function showMessage(tagline, isPositive = false) {
   const color = isPositive ? 'text-green-600' : 'text-red-600'
   messages.value.unshift({ id, text: tagline, color })
 
-  if (messages.value.length > 5) {
-    messages.value.pop()
+  // Flash the appropriate meter side
+  if (isPositive) {
+    hypeFlashColor.value = 'green'
+    regretFlashColor.value = 'green'
+  } else {
+    hypeFlashColor.value = 'red'
+    regretFlashColor.value = 'red'
   }
+
+  setTimeout(() => {
+    hypeFlashColor.value = null
+    regretFlashColor.value = null
+  }, 300) // short flash
 }
+
 
 </script>
 
@@ -1045,5 +1066,33 @@ function showMessage(tagline, isPositive = false) {
 
 .animate-pulse {
   animation: chaotic-pulse 0.6s ease-in-out infinite;
+}
+
+@keyframes shine {
+  0% {
+    background: rgba(255, 255, 255, 0);
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  }
+
+  50% {
+    background: rgba(255, 255, 255, 0.6);
+    transform: scale(1.05);
+    box-shadow: 0 0 12px 6px rgba(255, 255, 255, 0.5);
+  }
+
+  100% {
+    background: rgba(255, 255, 255, 0);
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+  }
+}
+
+.shine-overlay {
+  animation: shine 0.5s ease-in-out;
+  pointer-events: none;
+  z-index: 10;
+  border-radius: 9999px;
+  /* keep it pill-shaped */
 }
 </style>
