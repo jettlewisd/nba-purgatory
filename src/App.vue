@@ -989,7 +989,7 @@ function startGame() {
 }
 
 .animate-chaotic-9 {
-  animation: bounce-chaotic-9 3s linear infinite;
+  animation: bounce-chaotic-9 4s linear infinite;
   position: absolute;
 }
 
