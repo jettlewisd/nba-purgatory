@@ -601,7 +601,7 @@ function startGame() {
         showQuarterOver.value = true
 
         scheduleTurnover()
-        scheduleHotHand()
+
 
         if (game.quarter === 2 && !beerSequencePlayed.value) {
           beerSequencePlayed.value = true
