@@ -120,12 +120,12 @@ export const buttonEvents = [
             {
                 chance: 0.2,
                 effect: { money: 50, hype: 35, regret: -30 },
-                tagline: "unbelievable luck. your mortgage is safe."
+                tagline: "unbelievable luck. your mortgage is safe"
             },
             {
                 chance: 0.8,
                 effect: { money: -50, hype: -35, regret: 30 },
-                tagline: "rip to your kid’s tuition."
+                tagline: "rip to your kid’s tuition"
             }
         ]
     },

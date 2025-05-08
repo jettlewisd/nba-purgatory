@@ -139,6 +139,31 @@
         Luka traded at the half!!
       </div>
 
+      <div v-if="showFinalResults"
+        class="absolute inset-0 bg-gradient-to-br from-yellow-100 to-pink-200 z-[99999] flex flex-col items-center justify-center text-center px-6 py-10 space-y-6 border-4 border-black">
+
+        <h1 class="text-3xl font-bold font-['Press_Start_2P']">As you reflect on your experience, judgment awaits.</h1>
+
+        <div class="text-black text-lg font-sans font-semibold space-y-3">
+          <p>Your Score: {{ game.userScore }}</p>
+          <p>Them Score: {{ game.themScore }}</p>
+          <p>Regret: {{ game.regret }}</p>
+          <p>Hype: {{ game.hype }}</p>
+          <p class="mt-4 text-2xl font-bold">
+            Final Outcome:
+            <span :class="game.userScore >= 1 ? 'text-green-600' : 'text-red-600'">
+              {{ game.userScore >= 1 ? 'Heavenly' : 'Hellish' }}
+            </span>
+          </p>
+        </div>
+
+        <button @click="resetGame"
+          class="mt-6 px-6 py-3 bg-pink-500 hover:bg-pink-700 text-white text-lg border-2 border-black rounded-full shadow-md glow-button font-['Press_Start_2P']">
+          PLAY AGAIN?
+        </button>
+      </div>
+
+
       <div v-for="(event, index) in activeButtons" :key="event.id" class="absolute animate-float-chaotic z-40"
         :style="{ top: event.top + '%', left: event.left + '%' }">
         <button :class="[
@@ -180,10 +205,6 @@
       <img :src="bey" alt="Beyonce" class="w-[101px] h-auto object-contain animate-bounce-gently" />
       <img :src="buggy" alt="Buggy" class="w-[80px] h-auto object-contain animate-bounce-gently" />
     </div>
-
-    <footer class="p-4 text-center">
-      <!-- Optional Row here -->
-    </footer>
 
 
     <!-- 🎬 Start Menu Overlay -->
@@ -519,7 +540,7 @@ function handleBallClick() {
 
   floatUps.value.push({
     id,
-    text: isTurnover ? '+10' : `+${isHotHand.value ? 3 : 1}`,
+    text: isTurnover ? '+10' : `+${isHotHand.value ? 5 : 1}`,
     isTurnover,
   })
 
@@ -532,7 +553,7 @@ function handleBallClick() {
     return
   }
 
-  const points = isHotHand.value ? 3 : 1
+  const points = isHotHand.value ? 5 : 1
   game.increaseUserScore(points)
 
   isBallPopped.value = false
@@ -607,7 +628,17 @@ function startGame() {
         }, 2000)
       } else {
         showGameOver.value = true
+
+        // ⛔ stop the game loop to freeze scores
+        clearInterval(gameInterval)
+
+        // ⏳ delay before showing final results
+        setTimeout(() => {
+          showGameOver.value = false
+          showFinalResults.value = true
+        }, 2000)
       }
+
     }
 
     if (game.hype >= 50) {
@@ -622,6 +653,36 @@ function startGame() {
     spawnRandomButton()
   }, 4000)
 }
+
+function resetGame() {
+  // Reset all game state
+  game.hype = 49
+  game.regret = 50
+  game.money = 100
+  game.userScore = 0
+  game.themScore = 0
+  game.time = 0
+  game.quarter = 1
+  game.lukaTraded = false
+  game.isEjected = false
+  game.beerLevel = 0
+
+  // Clear UI state
+  floatUps.value = []
+  messages.value = []
+  activeButtons.value = []
+  shownButtonsGlobal.clear()
+  showGameOver.value = false
+  showStartMenu.value = true
+  beerSequencePlayed.value = false
+  isHotHand.value = false
+  isTurnoverPeriod.value = false
+
+  // Clear intervals
+  clearInterval(gameInterval)
+  clearInterval(buttonInterval)
+}
+
 
 </script>
 
