@@ -150,18 +150,25 @@
 
 
         <!-- Phase 1: Analysis -->
-        <div v-else-if="resultPhase >= 1" class="text-left text-lg mt-4 space-y-1">
-          <p>📊 <strong>Analysis complete.</strong></p>
-          <p>Based on:</p>
-          <ul class="list-disc ml-6 text-left">
+        <div v-else-if="resultPhase >= 1"
+          class="text-left text-base md:text-lg mt-4 space-y-3 font-sans leading-relaxed text-black">
+          <p class="text-xl font-bold font-['Press_Start_2P'] tracking-wide">
+            📊 Analysis complete.
+          </p>
+          <p class="italic text-sm md:text-base font-mono text-gray-800">
+            Based on:
+          </p>
+          <ul class="ml-4 space-y-1 list-disc marker:text-pink-600 font-mono text-gray-800">
             <li>Your final score</li>
             <li>Your emotional state (Hype & Regret)</li>
             <li>Your spending habits...</li>
           </ul>
         </div>
 
+
         <!-- Phase 2: Final Judgment Tagline Only -->
-        <p v-if="resultPhase === 2" class="text-xl font-bold mt-4 italic text-center max-w-md">
+        <p v-if="resultPhase === 2"
+          class="text-4xl md:text-5xl mt-6 text-center max-w-2xl font-serif text-black italic tracking-tight leading-snug">
           {{ getFinalTagline() }}
         </p>
 
@@ -342,7 +349,6 @@ function scheduleTurnover() {
   }, delay)
 }
 
-
 function scheduleHotHand() {
   const delay = Math.floor(Math.random() * 20000) + 15000
 
@@ -363,7 +369,7 @@ function getFinalTagline() {
 
   return isHeavenly
     ? "You found Heaven on Earth in the arena… this time."
-    : "This game was truly a Hellish experience. Ball is NOT life."
+    : "The game was truly a Hellish experience... ball is NOT life."
 }
 
 function activateHotHand() {
@@ -1085,7 +1091,7 @@ function resetGame() {
 }
 
 .animate-chaotic-5 {
-  animation: bounce-chaotic-5 175s linear infinite;
+  animation: bounce-chaotic-5 12s linear infinite;
   position: absolute;
 }
 
