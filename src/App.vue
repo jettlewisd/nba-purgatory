@@ -179,6 +179,43 @@
     <footer class="p-4 text-center">
       <!-- Optional Row here -->
     </footer>
+
+
+    <!-- 🎬 Start Menu Overlay -->
+    <div v-if="showStartMenu"
+      class="absolute inset-0 z-[99999] bg-yellow-300 bg-opacity-95 flex flex-col items-center justify-center text-center p-8 space-y-8">
+
+      <!-- Title stays in pixel font -->
+      <h1 class="text-3xl font-bold font-['Press_Start_2P']">Welcome to NBA Purgatory</h1>
+
+      <!-- Rules: larger, bolder, spaced out -->
+      <ul class="text-lg space-y-6 max-w-md font-sans font-bold text-black leading-relaxed">
+        <li>
+          <strong>1.</strong> Click the floating ball to score. <br />
+          <span class="text-base font-normal">Bonus points if you time it right.</span>
+        </li>
+        <li>
+          <strong>2.</strong> Keep REGRET low. Keep HYPE high. <br />
+          <span class="text-base font-normal">Your vibe controls your destiny (and the scoreboard).</span>
+        </li>
+        <li>
+          <strong>3.</strong> High HYPE = your team scores. Low HYPE = they score. <br />
+          <span class="text-base font-normal">Simple math. Chaotic execution.</span>
+        </li>
+      </ul>
+
+      <!-- Footer line -->
+      <p class="text-lg mt-4 italic font-sans text-black font-semibold">The sum of your statsheet determines your fate.
+      </p>
+
+      <!-- Button stays goofy -->
+      <button @click="showStartMenu = false"
+        class="mt-6 px-6 py-3 bg-pink-500 hover:bg-pink-700 text-white text-lg border-2 border-black rounded-full shadow-md glow-button font-['Press_Start_2P']">
+        START GAME
+      </button>
+    </div>
+
+
   </div>
 </template>
 
@@ -233,7 +270,7 @@ const isTurnoverPeriod = ref(false)
 const outcomeIndexes = reactive({})
 const hypeFlashColor = ref(null)
 const regretFlashColor = ref(null)
-
+const showStartMenu = ref(true)
 
 const shownButtonsGlobal = reactive(new Set())
 const beerSequencePlayed = ref(false)
@@ -539,6 +576,9 @@ function showMessage(tagline, isPositive = false) {
     regretFlashColor.value = null
   }, 1200) // short flash
 }
+
+
+
 
 </script>
 
