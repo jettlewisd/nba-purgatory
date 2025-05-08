@@ -77,7 +77,7 @@ export const buttonEvents = [
             {
                 chance: 0.4,
                 effect: { hype: -10, regret: 10 },
-                tagline: "you're not their type. maybe next time will be different."
+                tagline: "you're not their type. maybe next time will be different"
             }
         ]
     },
@@ -88,7 +88,7 @@ export const buttonEvents = [
             {
                 chance: 0.35,
                 effect: { hype: 20, regret: -20 },
-                tagline: "never played in your life (sent to wizards. instant starter)"
+                tagline: "never played in your life *sent to wizards* (instant starter)"
             },
             {
                 chance: 0.65,

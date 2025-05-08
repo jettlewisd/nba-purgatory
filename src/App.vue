@@ -12,7 +12,6 @@
         { 'hot-hand-flash': isHotHand }
       ]" draggable="false" />
 
-
       <!-- Float-Ups appear centered over the ball -->
       <div v-for="float in floatUps" :key="float.id" :class="[
         'absolute text-2xl font-bold pointer-events-none animate-float-up z-60',
@@ -22,11 +21,9 @@
       </div>
     </div>
 
-
     <!-- Floating Players -->
     <img v-for="(player, idx) in players" :key="idx" :src="player.src" :alt="player.name" :class="player.class"
       class="player-face" />
-
 
 
     <header class="p-4 flex flex-col items-center font-['Press_Start_2P']">
@@ -140,25 +137,36 @@
       </div>
 
       <div v-if="showFinalResults"
-        class="absolute inset-0 bg-gradient-to-br from-yellow-100 to-pink-200 z-[99999] flex flex-col items-center justify-center text-center px-6 py-10 space-y-6 border-4 border-black">
+        class="fixed inset-0 z-[99999] bg-yellow-300 bg-opacity-95 flex flex-col items-center justify-center text-center p-8 space-y-8 border-4 border-black">
 
-        <h1 class="text-3xl font-bold font-['Press_Start_2P']">As you reflect on your experience, judgment awaits.</h1>
+        <h1 v-if="resultPhase === 0" class="text-3xl font-bold font-['Press_Start_2P']">
+          As you reflect on your experience, judgment awaits.
+        </h1>
 
-        <div class="text-black text-lg font-sans font-semibold space-y-3">
-          <p>Your Score: {{ game.userScore }}</p>
-          <p>Them Score: {{ game.themScore }}</p>
-          <p>Regret: {{ game.regret }}</p>
-          <p>Hype: {{ game.hype }}</p>
-          <p class="mt-4 text-2xl font-bold">
-            Final Outcome:
-            <span :class="game.userScore >= 1 ? 'text-green-600' : 'text-red-600'">
-              {{ game.userScore >= 1 ? 'Heavenly' : 'Hellish' }}
-            </span>
-          </p>
+
+        <p v-if="resultPhase === 0" class="text-2xl mt-6 font-['Press_Start_2P'] tracking-wide">
+          ⌛ Calculating your fate...
+        </p>
+
+
+        <!-- Phase 1: Analysis -->
+        <div v-else-if="resultPhase >= 1" class="text-left text-lg mt-4 space-y-1">
+          <p>📊 <strong>Analysis complete.</strong></p>
+          <p>Based on:</p>
+          <ul class="list-disc ml-6 text-left">
+            <li>Your final score</li>
+            <li>Your emotional state (Hype & Regret)</li>
+            <li>Your spending habits...</li>
+          </ul>
         </div>
 
-        <button @click="resetGame"
-          class="mt-6 px-6 py-3 bg-pink-500 hover:bg-pink-700 text-white text-lg border-2 border-black rounded-full shadow-md glow-button font-['Press_Start_2P']">
+        <!-- Phase 2: Final Judgment Tagline Only -->
+        <p v-if="resultPhase === 2" class="text-xl font-bold mt-4 italic text-center max-w-md">
+          {{ getFinalTagline() }}
+        </p>
+
+        <button v-if="resultPhase === 2" @click="resetGame"
+          class="mt-8 px-6 py-3 bg-pink-500 hover:bg-pink-700 text-white text-lg border-2 border-black rounded-full shadow-md glow-button font-['Press_Start_2P']">
           PLAY AGAIN?
         </button>
       </div>
@@ -187,7 +195,6 @@
 
     </main>
 
-
     <!-- 👑 Courtside Celebs -->
     <div class="absolute bottom-[1%] left-1/2 transform -translate-x-1/2 flex justify-center gap-x-3 z-30 w-[720px]">
       <img :src="riri" alt="Rihanna" class="w-[89px] h-auto object-contain animate-bounce-gently" />
@@ -205,7 +212,6 @@
       <img :src="bey" alt="Beyonce" class="w-[101px] h-auto object-contain animate-bounce-gently" />
       <img :src="buggy" alt="Buggy" class="w-[80px] h-auto object-contain animate-bounce-gently" />
     </div>
-
 
     <!-- 🎬 Start Menu Overlay -->
     <div v-if="showStartMenu"
@@ -239,9 +245,7 @@
         class="mt-6 px-6 py-3 bg-pink-500 hover:bg-pink-700 text-white text-lg border-2 border-black rounded-full shadow-md glow-button font-['Press_Start_2P']">
         START GAME
       </button>
-
     </div>
-
 
   </div>
 </template>
@@ -300,7 +304,7 @@ const regretFlashColor = ref(null)
 const showStartMenu = ref(true)
 const isHotHand = ref(false)
 const showFinalResults = ref(false)
-
+const resultPhase = ref(0)
 
 const shownButtonsGlobal = reactive(new Set())
 const beerSequencePlayed = ref(false)
@@ -350,7 +354,17 @@ function scheduleHotHand() {
   }, delay)
 }
 
+function getFinalTagline() {
+  const scoreWin = game.userScore > game.themScore
+  const lowRegret = game.regret <= 60
+  const decentHype = game.hype >= 40
 
+  const isHeavenly = scoreWin && lowRegret && decentHype
+
+  return isHeavenly
+    ? "You found Heaven on Earth in the arena… this time."
+    : "This game was truly a Hellish experience. Ball is NOT life."
+}
 
 function activateHotHand() {
   isHotHand.value = true
@@ -580,7 +594,7 @@ function showMessage(tagline, isPositive = false) {
 }
 
 function startGame() {
-  game.time = 40
+  game.time = 2
   scheduleTurnover() // ✅ start turnover effect timer
   scheduleHotHand() // ✅ start hot hand effect timer
 
@@ -597,7 +611,7 @@ function startGame() {
     } else {
       if (game.quarter < 4) {
         game.advanceQuarter()
-        game.time = 40
+        game.time = 2
         showQuarterOver.value = true
 
         scheduleTurnover()
@@ -627,13 +641,17 @@ function startGame() {
         // ⛔ stop the game loop to freeze scores
         clearInterval(gameInterval)
 
-        // ⏳ delay before showing final results
         setTimeout(() => {
           showGameOver.value = false
           showFinalResults.value = true
-        }, 2000)
-      }
 
+          // Begin judgment sequence after results screen shows
+          setTimeout(() => {
+            resultPhase.value = 2
+          }, 5000) // show everything after 6 seconds
+        }, 2000)
+
+      }
     }
 
     if (game.hype >= 50) {
@@ -669,6 +687,8 @@ function resetGame() {
   shownButtonsGlobal.clear()
   showGameOver.value = false
   showStartMenu.value = true
+  showFinalResults.value = false
+  resultPhase.value = 0
   beerSequencePlayed.value = false
   isHotHand.value = false
   isTurnoverPeriod.value = false
