@@ -278,6 +278,7 @@ const hypeFlashColor = ref(null)
 const regretFlashColor = ref(null)
 const showStartMenu = ref(true)
 const isHotHand = ref(false)
+const showFinalResults = ref(false)
 
 
 const shownButtonsGlobal = reactive(new Set())
