@@ -209,10 +209,11 @@
       </p>
 
       <!-- Button stays goofy -->
-      <button @click="showStartMenu = false"
+      <button @click="showStartMenu = false; startGame()"
         class="mt-6 px-6 py-3 bg-pink-500 hover:bg-pink-700 text-white text-lg border-2 border-black rounded-full shadow-md glow-button font-['Press_Start_2P']">
         START GAME
       </button>
+
     </div>
 
 
@@ -279,6 +280,7 @@ let totalBeerButtons = 5
 let beerClicks = 0
 
 let buttonInterval = null
+let gameInterval = null
 
 const players = [
   { src: shai, name: 'Shai', class: 'animate-chaotic-1' },
@@ -304,66 +306,12 @@ function scheduleTurnover() {
 }
 
 onMounted(() => {
-  game.time = 40
-  scheduleTurnover() // ✅ trigger for Q1
-
-  buttonEvents.forEach(event => {
-    if (event.outcomes.length > 1) {
-      outcomeIndexes[event.label] = Math.floor(Math.random() * event.outcomes.length)
-    }
-  })
-
-  const gameInterval = setInterval(() => {
-    if (game.time > 0) {
-      game.time--
-    } else {
-      if (game.quarter < 4) {
-        game.advanceQuarter()
-        game.time = 40
-        showQuarterOver.value = true
-
-        scheduleTurnover() // ✅ trigger for Q2–Q4
-
-        if (game.quarter === 2 && !beerSequencePlayed.value) {
-          beerSequencePlayed.value = true
-          spawnBeerSequence()
-        }
-
-        if (game.quarter === 3 && !game.lukaTraded) {
-          game.lukaTraded = true
-          game.addRegret(20)
-          showLukaMessage.value = true
-          showQuarterOver.value = false
-          setTimeout(() => {
-            showLukaMessage.value = false
-          }, 2000)
-        }
-
-        setTimeout(() => {
-          showQuarterOver.value = false
-        }, 2000)
-      } else {
-        showGameOver.value = true
-      }
-    }
-
-    if (game.hype >= 50) {
-      game.increaseUserScore(1)
-    } else {
-      game.increaseThemScore(1)
-    }
-
-  }, 1000)
-
-  buttonInterval = setInterval(() => {
-    spawnRandomButton()
-  }, 4000)
-
   onUnmounted(() => {
     clearInterval(gameInterval)
     clearInterval(buttonInterval)
   })
 })
+
 
 function spawnBeerSequence() {
   clearInterval(buttonInterval)
@@ -379,7 +327,7 @@ function spawnBeerSequence() {
     if (currentBeerIndex >= beerButtons.length) {
       setTimeout(() => {
         buttonSpawningPaused.value = false
-        buttonInterval = setInterval(spawnRandomButton, 2000)
+        buttonInterval = setInterval(spawnRandomButton, 4000)
       }, 3000)
       return
     }
@@ -577,8 +525,63 @@ function showMessage(tagline, isPositive = false) {
   }, 1200) // short flash
 }
 
+function startGame() {
+  game.time = 40
+  scheduleTurnover() // ✅ start turnover effect timer
 
+  buttonEvents.forEach(event => {
+    if (event.outcomes.length > 1) {
+      outcomeIndexes[event.label] = Math.floor(Math.random() * event.outcomes.length)
+    }
+  })
 
+  // ⏱️ Game timer loop
+  gameInterval = setInterval(() => {
+    if (game.time > 0) {
+      game.time--
+    } else {
+      if (game.quarter < 4) {
+        game.advanceQuarter()
+        game.time = 40
+        showQuarterOver.value = true
+
+        scheduleTurnover()
+
+        if (game.quarter === 2 && !beerSequencePlayed.value) {
+          beerSequencePlayed.value = true
+          spawnBeerSequence()
+        }
+
+        if (game.quarter === 3 && !game.lukaTraded) {
+          game.lukaTraded = true
+          game.addRegret(20)
+          showLukaMessage.value = true
+          showQuarterOver.value = false
+          setTimeout(() => {
+            showLukaMessage.value = false
+          }, 2000)
+        }
+
+        setTimeout(() => {
+          showQuarterOver.value = false
+        }, 2000)
+      } else {
+        showGameOver.value = true
+      }
+    }
+
+    if (game.hype >= 50) {
+      game.increaseUserScore(1)
+    } else {
+      game.increaseThemScore(3)
+    }
+  }, 1000)
+
+  // 🧃 Button spawning
+  buttonInterval = setInterval(() => {
+    spawnRandomButton()
+  }, 4000)
+}
 
 </script>
 

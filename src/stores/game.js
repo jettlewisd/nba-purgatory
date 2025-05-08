@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 
 export const useGameStore = defineStore('game', {
     state: () => ({
-        hype: 50,
+        hype: 49,
         regret: 50,
         money: 100,
         scoreGap: 0,
