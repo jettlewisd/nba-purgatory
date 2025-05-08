@@ -8,7 +8,8 @@
 
       <img :src="bball" alt="Floating Ball" class="w-[70px] h-[70px] object-contain" :class="[
         { 'pop': isBallPopped },
-        { 'turnover-flash': isTurnoverPeriod }
+        { 'turnover-flash': isTurnoverPeriod },
+        { 'hot-hand-flash': isHotHand }
       ]" draggable="false" />
 
 
@@ -123,6 +124,10 @@
         LeTURNOVER‼ 😟
       </div>
 
+      <div v-if="isHotHand"
+        class="absolute top-[25%] inset-x-0 mx-auto w-fit bg-yellow-500 text-black border-4 border-white px-8 py-4 rounded-xl shadow-2xl text-4xl font-extrabold z-[9999] animate-pulse pointer-events-none mix-blend-difference tracking-widest text-center">
+        HOT HAND! 🔥
+      </div>
 
       <div v-if="showGameOver"
         class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-red-600 text-white px-8 py-4 rounded shadow-lg text-4xl font-bold z-50">
@@ -272,6 +277,8 @@ const outcomeIndexes = reactive({})
 const hypeFlashColor = ref(null)
 const regretFlashColor = ref(null)
 const showStartMenu = ref(true)
+const isHotHand = ref(false)
+
 
 const shownButtonsGlobal = reactive(new Set())
 const beerSequencePlayed = ref(false)
@@ -296,13 +303,44 @@ const players = [
 ]
 
 function scheduleTurnover() {
-  const delay = Math.floor(Math.random() * 20000) + 10000 // 10–30s
+  const delay = Math.floor(Math.random() * 20000) + 10000
+
   setTimeout(() => {
-    isTurnoverPeriod.value = true
-    setTimeout(() => {
-      isTurnoverPeriod.value = false
-    }, 5000)
+    // 🛑 don't start turnover if Hot Hand is active
+    if (!isHotHand.value && !isTurnoverPeriod.value) {
+      isTurnoverPeriod.value = true
+      setTimeout(() => {
+        isTurnoverPeriod.value = false
+      }, 5000)
+    }
+
+    // schedule next turnover
+    scheduleTurnover()
   }, delay)
+}
+
+
+function scheduleHotHand() {
+  const delay = Math.floor(Math.random() * 20000) + 15000
+
+  setTimeout(() => {
+    // 🛑 don't activate Hot Hand if LeTurnover is active
+    if (!isTurnoverPeriod.value && !isHotHand.value) {
+      activateHotHand()
+    }
+
+    // keep scheduling the next one
+    scheduleHotHand()
+  }, delay)
+}
+
+
+
+function activateHotHand() {
+  isHotHand.value = true
+  setTimeout(() => {
+    isHotHand.value = false
+  }, 5000)
 }
 
 onMounted(() => {
@@ -471,7 +509,6 @@ function handleButtonClick(event) {
   if (event.beerLevelRequired !== undefined) {
     game.unlockNextBeer()
   }
-
   activeButtons.value = activeButtons.value.filter(btn => btn.id !== event.id)
 }
 
@@ -481,7 +518,7 @@ function handleBallClick() {
 
   floatUps.value.push({
     id,
-    text: isTurnover ? '+10' : '+1',
+    text: isTurnover ? '+10' : `+${isHotHand.value ? 3 : 1}`,
     isTurnover,
   })
 
@@ -494,7 +531,8 @@ function handleBallClick() {
     return
   }
 
-  game.increaseUserScore(1)
+  const points = isHotHand.value ? 3 : 1
+  game.increaseUserScore(points)
 
   isBallPopped.value = false
   requestAnimationFrame(() => {
@@ -528,6 +566,7 @@ function showMessage(tagline, isPositive = false) {
 function startGame() {
   game.time = 40
   scheduleTurnover() // ✅ start turnover effect timer
+  scheduleHotHand() // ✅ start hot hand effect timer
 
   buttonEvents.forEach(event => {
     if (event.outcomes.length > 1) {
@@ -1125,5 +1164,19 @@ function startGame() {
   pointer-events: none;
   z-index: 10;
   border-radius: 9999px;
+}
+
+.hot-hand-flash {
+  animation: hot-hand-flash 0.3s step-start infinite;
+}
+
+@keyframes hot-hand-flash {
+  50% {
+    filter: brightness(1.7) saturate(1.5);
+  }
+
+  100% {
+    filter: none;
+  }
 }
 </style>
