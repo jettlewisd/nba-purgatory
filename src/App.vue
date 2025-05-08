@@ -112,10 +112,6 @@
 
     <!-- 🏟️ Court (Floating Buttons / Overlays) -->
     <main class="relative w-full h-full overflow-hidden">
-      <div v-if="showChantOverlay"
-        class="absolute top-10 left-1/2 transform -translate-x-1/2 bg-red-700 text-white px-6 py-3 rounded shadow-lg text-xl font-bold animate-bounce z-50">
-        🔥 FIRE NICO!! The crowd is losing it!
-      </div>
 
       <div v-if="showQuarterOver"
         class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-yellow-400 text-black px-8 py-4 rounded shadow-lg text-3xl font-bold z-50">
@@ -226,7 +222,6 @@ import bey from './assets/images/courtside/bey.png'
 import buggy from './assets/images/courtside/buggy.png'
 
 const game = useGameStore()
-const showChantOverlay = ref(false)
 const activeButtons = ref([])
 const showQuarterOver = ref(false)
 const showGameOver = ref(false)
@@ -261,8 +256,19 @@ const players = [
   { src: jimmy, name: 'Jimmy', class: 'animate-chaotic-10' },
 ]
 
+function scheduleTurnover() {
+  const delay = Math.floor(Math.random() * 20000) + 10000 // 10–30s
+  setTimeout(() => {
+    isTurnoverPeriod.value = true
+    setTimeout(() => {
+      isTurnoverPeriod.value = false
+    }, 5000)
+  }, delay)
+}
+
 onMounted(() => {
   game.time = 40
+  scheduleTurnover() // ✅ trigger for Q1
 
   buttonEvents.forEach(event => {
     if (event.outcomes.length > 1) {
@@ -279,20 +285,11 @@ onMounted(() => {
         game.time = 40
         showQuarterOver.value = true
 
+        scheduleTurnover() // ✅ trigger for Q2–Q4
+
         if (game.quarter === 2 && !beerSequencePlayed.value) {
           beerSequencePlayed.value = true
           spawnBeerSequence()
-        }
-
-        // Trigger turnover at start of Q2–Q4
-        if (game.quarter >= 2) {
-          const randomDelay = Math.floor(Math.random() * 25000) + 5000 // Between 5s–30s
-          setTimeout(() => {
-            isTurnoverPeriod.value = true
-            setTimeout(() => {
-              isTurnoverPeriod.value = false
-            }, 5000)
-          }, randomDelay)
         }
 
         if (game.quarter === 3 && !game.lukaTraded) {
@@ -540,18 +537,10 @@ function showMessage(tagline, isPositive = false) {
   setTimeout(() => {
     hypeFlashColor.value = null
     regretFlashColor.value = null
-  }, 300) // short flash
+  }, 1200) // short flash
 }
 
-
 </script>
-
-
-
-
-
-
-
 
 
 
@@ -1089,10 +1078,9 @@ function showMessage(tagline, isPositive = false) {
 }
 
 .shine-overlay {
-  animation: shine 0.5s ease-in-out;
+  animation: shine 0.6s ease-in-out forwards;
   pointer-events: none;
   z-index: 10;
   border-radius: 9999px;
-  /* keep it pill-shaped */
 }
 </style>

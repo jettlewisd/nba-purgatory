@@ -1,5 +1,3 @@
-
-
 import { defineStore } from 'pinia';
 
 export const useGameStore = defineStore('game', {
@@ -19,16 +17,16 @@ export const useGameStore = defineStore('game', {
 
     actions: {
         increaseHype(amount) {
-            this.hype = Math.min(100, this.hype + amount)
+            this.hype = Math.min(100, Math.max(0, this.hype + amount))
         },
         decreaseHype(amount) {
-            this.hype = Math.max(0, this.hype - amount)
+            this.hype = Math.max(0, Math.min(100, this.hype - amount))
         },
         addRegret(amount) {
-            this.regret = Math.min(100, this.regret + amount)
+            this.regret = Math.min(100, Math.max(0, this.regret + amount))
         },
         decreaseRegret(amount) {
-            this.regret = Math.max(0, this.regret - amount)
+            this.regret = Math.max(0, Math.min(100, this.regret - amount))
         },
         spendMoney(amount) {
             this.money = Math.max(0, this.money - amount)
@@ -39,7 +37,6 @@ export const useGameStore = defineStore('game', {
         updateScoreGap(amount) {
             this.scoreGap += amount
         },
-
         increaseUserScore(points) {
             this.userScore += points
         },
@@ -47,7 +44,7 @@ export const useGameStore = defineStore('game', {
             this.themScore += points
         },
         unlockNextBeer() {
-            this.beerLevel++;
+            this.beerLevel++
         }
     }
 })
