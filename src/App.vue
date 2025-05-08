@@ -335,9 +335,6 @@ function scheduleTurnover() {
         isTurnoverPeriod.value = false
       }, 5000)
     }
-
-    // schedule next turnover
-    scheduleTurnover()
   }, delay)
 }
 
@@ -350,9 +347,6 @@ function scheduleHotHand() {
     if (!isTurnoverPeriod.value && !isHotHand.value) {
       activateHotHand()
     }
-
-    // keep scheduling the next one
-    scheduleHotHand()
   }, delay)
 }
 
@@ -607,6 +601,7 @@ function startGame() {
         showQuarterOver.value = true
 
         scheduleTurnover()
+        scheduleHotHand()
 
         if (game.quarter === 2 && !beerSequencePlayed.value) {
           beerSequencePlayed.value = true
