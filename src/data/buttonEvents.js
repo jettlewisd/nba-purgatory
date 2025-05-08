@@ -16,7 +16,6 @@ export const buttonEvents = [
             }
         ]
     },
-
     {
         label: "Dance Cam!",
         tier: "low",
@@ -173,7 +172,7 @@ export const buttonEvents = [
         outcomes: [
             {
                 chance: 1.0,
-                effect: { money: -5, hype: 3, regret: 2 },
+                effect: { money: -10, hype: 3, regret: 2 },
                 tagline: "yum! *drops them*"
             }
         ]
@@ -184,7 +183,7 @@ export const buttonEvents = [
         outcomes: [
             {
                 chance: 1.0,
-                effect: { money: -5, hype: -20, regret: 15 },
+                effect: { money: -7, hype: -20, regret: 15 },
                 tagline: "*brick*"
             }
         ]
@@ -195,8 +194,8 @@ export const buttonEvents = [
         outcomes: [
             {
                 chance: 1.0,
-                effect: { money: 20, hype: -20, regret: +15 },
-                tagline: "oof. MettaWorldWar2"
+                effect: { money: -12, hype: -20, regret: +15 },
+                tagline: "Metta World War 2 🤕"
             }
         ]
     },
@@ -206,7 +205,7 @@ export const buttonEvents = [
         outcomes: [
             {
                 chance: 1.0,
-                effect: { money: 5, hype: 10, regret: 10 },
+                effect: { money: 1, hype: 10, regret: 10 },
                 tagline: "it was XS but whatev"
             }
         ]
@@ -217,7 +216,7 @@ export const buttonEvents = [
         outcomes: [
             {
                 chance: 1.0,
-                effect: { money: 10, hype: -10, regret: 5 },
+                effect: { money: 1, hype: -10, regret: 5 },
                 tagline: "all you got was a Gobert jersey :/"
             }
         ]
@@ -229,7 +228,7 @@ export const buttonEvents = [
         outcomes: [
             {
                 chance: 1.0,
-                effect: { money: -3, hype: 3 },
+                effect: { money: -8, hype: 3 },
                 tagline: "warm AND expensive <3"
             }
         ]
@@ -241,7 +240,7 @@ export const buttonEvents = [
         outcomes: [
             {
                 chance: 1.0,
-                effect: { money: -3, hype: 4, regret: -5 },
+                effect: { money: -8, hype: 4, regret: -5 },
                 tagline: "oh yea let's go baby"
             }
         ]
@@ -253,7 +252,7 @@ export const buttonEvents = [
         outcomes: [
             {
                 chance: 1.0,
-                effect: { money: -3, hype: 5, regret: -5 },
+                effect: { money: -12, hype: 5, regret: -5 },
                 tagline: "yyyEEAH I LUV U JIMMY!!"
             }
         ]
@@ -265,7 +264,7 @@ export const buttonEvents = [
         outcomes: [
             {
                 chance: 1.0,
-                effect: { money: -3, hype: 4, regret: 7 },
+                effect: { money: -12, hype: 4, regret: 7 },
                 tagline: "asd;lnvj2haildshcuiw78asd"
             }
         ]
@@ -277,12 +276,12 @@ export const buttonEvents = [
         outcomes: [
             {
                 chance: 0.5,
-                effect: { money: -3, hype: 8, regret: -10 },
+                effect: { money: -15, hype: 8, regret: -10 },
                 tagline: "ZZzzzzzzzz"
             },
             {
                 chance: 0.5,
-                effect: { money: -3, hype: -12, regret: 12 },
+                effect: { money: -15, hype: -12, regret: 12 },
                 tagline: "phone = lost"
             }
         ]

@@ -29,7 +29,7 @@ export const useGameStore = defineStore('game', {
             this.regret = Math.max(0, Math.min(100, this.regret - amount))
         },
         spendMoney(amount) {
-            this.money = Math.max(0, this.money - amount)
+            this.money -= amount
         },
         advanceQuarter() {
             this.quarter++
