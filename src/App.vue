@@ -228,24 +228,30 @@
       <h1 class="text-3xl font-bold font-['Press_Start_2P']">Welcome to NBA Purgatory</h1>
 
       <!-- Rules: larger, bolder, spaced out -->
-      <ul class="text-lg space-y-6 max-w-md font-sans font-bold text-black leading-relaxed">
+      <ul class="text-base md:text-lg font-sans font-normal text-gray-800 leading-relaxed space-y-6 max-w-md">
         <li>
-          <strong>1.</strong> Click the floating ball to score. <br />
+          <strong>1.</strong> <span class="font-bold">Click the floating ball to score.</span><br />
           <span class="text-base font-normal">Bonus points if you time it right.</span>
         </li>
         <li>
-          <strong>2.</strong> Keep REGRET low. Keep HYPE high. <br />
+          <strong>2.</strong> <span class="font-bold">Keep REGRET low. Keep HYPE high.</span><br />
           <span class="text-base font-normal">Your vibe controls your destiny (and the scoreboard).</span>
         </li>
         <li>
-          <strong>3.</strong> High HYPE = your team scores. Low HYPE = they score. <br />
+          <strong>3.</strong> <span class="font-bold">High HYPE = your team scores. Low HYPE = they score.</span><br />
           <span class="text-base font-normal">Simple math. Chaotic execution.</span>
         </li>
       </ul>
 
-      <!-- Footer line -->
-      <p class="text-lg mt-4 italic font-sans text-black font-semibold">The sum of your statsheet determines your fate.
+
+      <!-- Lower tagline -->
+      <p
+        class="text-4xl md:text-5xl mt-6 text-center max-w-2xl font-serif text-black italic tracking-tight leading-snug">
+        The sum of your statsheet determines your fate.
       </p>
+
+
+
 
       <!-- Button stays goofy -->
       <button @click="showStartMenu = false; startGame()"
@@ -361,16 +367,20 @@ function scheduleHotHand() {
 }
 
 function getFinalTagline() {
-  const scoreWin = game.userScore > game.themScore
-  const lowRegret = game.regret <= 60
-  const decentHype = game.hype >= 40
+  const scoreDiff = game.userScore - game.themScore
+  const regretDelta = game.regret - 50
+  const regretScore = regretDelta > 0
+    ? -0.3 * regretDelta
+    : 0.3 * Math.abs(regretDelta)
+  const moneyScore = 0.3 * game.money
 
-  const isHeavenly = scoreWin && lowRegret && decentHype
+  const fateScore = (scoreDiff * 0.5) + regretScore + moneyScore
 
-  return isHeavenly
+  return fateScore >= 0
     ? "You found Heaven on Earth in the arena… this time."
     : "The game was truly a Hellish experience... ball is NOT life."
 }
+
 
 function activateHotHand() {
   isHotHand.value = true
@@ -600,7 +610,7 @@ function showMessage(tagline, isPositive = false) {
 }
 
 function startGame() {
-  game.time = 2
+  game.time = 15
   scheduleTurnover() // ✅ start turnover effect timer
   scheduleHotHand() // ✅ start hot hand effect timer
 
@@ -617,7 +627,7 @@ function startGame() {
     } else {
       if (game.quarter < 4) {
         game.advanceQuarter()
-        game.time = 2
+        game.time = 15
         showQuarterOver.value = true
 
         scheduleTurnover()
