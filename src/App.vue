@@ -279,6 +279,8 @@ import bounceSound from './assets/sounds/bounce.mp3'
 import buzzerSound from './assets/sounds/buzzer.mp3'
 import ourBallSound from './assets/sounds/our-ball.mp3'
 import bricksSound from './assets/sounds/bricks.mp3'
+import backUpTerrySound from './assets/sounds/back-up-terry.mp3'
+import fireNicoSound from './assets/sounds/fire-nico.mp3'
 
 // Background + Assets
 import courtBg from './assets/images/court-bg.png'
@@ -545,6 +547,14 @@ function handleButtonClick(event) {
 
     if (event.label === 'Venmo Devin Booker – "Do something"') {
       playSound(bricksSound, 0.75)
+    }
+
+    if (event.label === 'Heckle Detroit') {
+      try {
+        playSound(backUpTerrySound, 0.75)
+      } catch (e) {
+        console.warn("Couldn't play back-up-terry.mp3:", e)
+      }
     }
 
     if (redFixedLabels.has(event.label)) {
