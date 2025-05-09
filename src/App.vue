@@ -279,6 +279,12 @@ import { ref, onMounted, onUnmounted, reactive } from 'vue'
 import { useGameStore } from './stores/game'
 import { buttonEvents } from './data/buttonEvents'
 
+// Sounds
+import { playSound } from './utils/sound'
+import bounceSound from './assets/sounds/bounce.mp3'
+import buzzerSound from './assets/sounds/buzzer.mp3'
+import ourBallSound from './assets/sounds/our-ball.mp3'
+
 // Background + Assets
 import courtBg from './assets/images/court-bg.png'
 import bball from './assets/images/bball.png'
@@ -350,6 +356,7 @@ const players = [
   { src: jimmy, name: 'Jimmy', class: 'animate-chaotic-10' },
 ]
 
+
 function scheduleTurnover() {
   const delay = Math.floor(Math.random() * 20000) + 10000
 
@@ -357,12 +364,15 @@ function scheduleTurnover() {
     // 🛑 don't start turnover if Hot Hand is active
     if (!isHotHand.value && !isTurnoverPeriod.value) {
       isTurnoverPeriod.value = true
+      playSound(ourBallSound, 0.8)
+
       setTimeout(() => {
         isTurnoverPeriod.value = false
       }, 5000)
     }
   }, delay)
 }
+
 
 function scheduleHotHand() {
   const delay = Math.floor(Math.random() * 20000) + 15000
@@ -374,6 +384,7 @@ function scheduleHotHand() {
     }
   }, delay)
 }
+
 
 function getFinalTagline() {
   const scoreDiff = game.userScore - game.themScore
@@ -397,6 +408,7 @@ function activateHotHand() {
     isHotHand.value = false
   }, 5000)
 }
+
 
 onMounted(() => {
   onUnmounted(() => {
@@ -451,6 +463,7 @@ function spawnBeerSequence() {
   window.__spawnNextBeer = delayedSpawnNextBeer
 }
 
+
 function spawnRandomButton() {
   if (buttonSpawningPaused.value) return
 
@@ -483,11 +496,13 @@ function spawnRandomButton() {
   }, 4000)
 }
 
+
 const redFixedLabels = new Set([
   "Venmo Devin Booker – \"Do something\"",
   "Heckle Detroit",
   "Shoplift from the Team Shop",
 ])
+
 
 const greenFixedLabels = new Set([
   "Blow Kiss at Kelly Oubre",
@@ -496,6 +511,7 @@ const greenFixedLabels = new Set([
   "Moss a Kid for a T-Shirt",
   "Beer?",
 ])
+
 
 function handleButtonClick(event) {
   if (event.cost) {
@@ -567,7 +583,10 @@ function handleButtonClick(event) {
   activeButtons.value = activeButtons.value.filter(btn => btn.id !== event.id)
 }
 
+
 function handleBallClick() {
+  playSound(bounceSound, 0.6)
+
   const id = Date.now() + Math.random()
   const isTurnover = isTurnoverPeriod.value
 
@@ -598,6 +617,7 @@ function handleBallClick() {
   })
 }
 
+
 function showMessage(tagline, isPositive = false) {
   const id = Date.now() + Math.random()
   const color = isPositive ? 'text-green-600' : 'text-red-600'
@@ -617,6 +637,7 @@ function showMessage(tagline, isPositive = false) {
     regretFlashColor.value = null
   }, 1200) // short flash
 }
+
 
 function startGame() {
   game.time = 15
@@ -662,6 +683,7 @@ function startGame() {
         }, 2000)
       } else {
         showGameOver.value = true
+        playSound(buzzerSound, 0.7)
 
         // ⛔ stop the game loop to freeze scores
         clearInterval(gameInterval)
@@ -691,6 +713,7 @@ function startGame() {
     spawnRandomButton()
   }, 4000)
 }
+
 
 function resetGame() {
   // Reset all game state
@@ -722,7 +745,6 @@ function resetGame() {
   clearInterval(gameInterval)
   clearInterval(buttonInterval)
 }
-
 
 </script>
 
