@@ -7,12 +7,14 @@ export const buttonEvents = [
             {
                 chance: 0.8,
                 effect: { hype: 5, regret: -5 },
-                tagline: "a cool 7 likes 😎"
+                tagline: "a cool 7 likes 😎",
+                sound: "mr-pbh-ooo-wee.mp3"
             },
             {
                 chance: 0.2,
                 effect: { hype: -5, regret: 5 },
-                tagline: "you tagged your ex by accident 💀"
+                tagline: "you tagged your ex by accident 💀",
+                sound: "mr-pbh-ha-haa.mp3"
             }
         ]
     },
@@ -28,7 +30,7 @@ export const buttonEvents = [
             {
                 chance: 0.2,
                 effect: { hype: -5, regret: 5 },
-                tagline: "boos for your whip, boos your nae nae"
+                tagline: "boos your nae nae"
             }
         ]
     },
@@ -184,7 +186,8 @@ export const buttonEvents = [
             {
                 chance: 1.0,
                 effect: { money: -7, hype: -20, regret: 15 },
-                tagline: "*brick*"
+                tagline: "*brick*",
+                sound: "bricks.mp3"
             }
         ]
     },
@@ -195,7 +198,8 @@ export const buttonEvents = [
             {
                 chance: 1.0,
                 effect: { money: -12, hype: -20, regret: +15 },
-                tagline: "Metta World War 2 🤕"
+                tagline: "Metta World War 2 🤕",
+                sound: "back-up-terry.mp3"
             }
         ]
     },
@@ -206,7 +210,7 @@ export const buttonEvents = [
             {
                 chance: 1.0,
                 effect: { money: 1, hype: 10, regret: 10 },
-                tagline: "it was XS but whatev"
+                tagline: "it's XS but whatev"
             }
         ]
     },

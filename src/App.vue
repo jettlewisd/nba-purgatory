@@ -281,6 +281,8 @@ import ourBallSound from './assets/sounds/our-ball.mp3'
 import bricksSound from './assets/sounds/bricks.mp3'
 import backUpTerrySound from './assets/sounds/back-up-terry.mp3'
 import fireNicoSound from './assets/sounds/fire-nico.mp3'
+import haHaaSound from './assets/sounds/mr-pbh-ha-haa.mp3'
+import oooWeeSound from './assets/sounds/mr-pbh-ooo-wee.mp3'
 
 // Background + Assets
 import courtBg from './assets/images/court-bg.png'
@@ -353,23 +355,30 @@ const players = [
   { src: jimmy, name: 'Jimmy', class: 'animate-chaotic-10' },
 ]
 
+function activateTurnover() {
+  isTurnoverPeriod.value = true
+  playSound(ourBallSound, 0.8)
+  setTimeout(() => {
+    isTurnoverPeriod.value = false
+  }, 5000)
+}
 
 function scheduleTurnover() {
   const delay = Math.floor(Math.random() * 20000) + 10000
 
   setTimeout(() => {
-    // 🛑 don't start turnover if Hot Hand is active
     if (!isHotHand.value && !isTurnoverPeriod.value) {
-      isTurnoverPeriod.value = true
-      playSound(ourBallSound, 0.8)
-
-      setTimeout(() => {
-        isTurnoverPeriod.value = false
-      }, 5000)
+      activateTurnover()
     }
   }, delay)
 }
 
+function activateHotHand() {
+  isHotHand.value = true
+  setTimeout(() => {
+    isHotHand.value = false
+  }, 5000)
+}
 
 function scheduleHotHand() {
   const delay = Math.floor(Math.random() * 15000) + 5000; // fire between 5s–20s into the quarter
@@ -381,7 +390,6 @@ function scheduleHotHand() {
     }
   }, delay);
 }
-
 
 function getFinalTagline() {
   const scoreDiff = game.userScore - game.themScore
@@ -398,22 +406,12 @@ function getFinalTagline() {
     : "The game was truly a Hellish experience... ball is NOT life."
 }
 
-
-function activateHotHand() {
-  isHotHand.value = true
-  setTimeout(() => {
-    isHotHand.value = false
-  }, 5000)
-}
-
-
 onMounted(() => {
   onUnmounted(() => {
     clearInterval(gameInterval)
     clearInterval(buttonInterval)
   })
 })
-
 
 function spawnBeerSequence() {
   clearInterval(buttonInterval)
@@ -460,7 +458,6 @@ function spawnBeerSequence() {
   window.__spawnNextBeer = delayedSpawnNextBeer
 }
 
-
 function spawnRandomButton() {
   if (buttonSpawningPaused.value) return
 
@@ -493,13 +490,11 @@ function spawnRandomButton() {
   }, 4000)
 }
 
-
 const redFixedLabels = new Set([
   "Venmo Devin Booker – \"Do something\"",
   "Heckle Detroit",
   "Shoplift from the Team Shop",
 ])
-
 
 const greenFixedLabels = new Set([
   "Blow Kiss at Kelly Oubre",
@@ -508,7 +503,6 @@ const greenFixedLabels = new Set([
   "Moss a Kid for a T-Shirt",
   "Beer?",
 ])
-
 
 function handleButtonClick(event) {
   if (event.cost) {
@@ -542,20 +536,27 @@ function handleButtonClick(event) {
     if (outcome.effect.regret) game.addRegret(outcome.effect.regret)
     if (outcome.effect.money) game.spendMoney(-outcome.effect.money)
 
-    let isPositive =
-      (outcome.effect.hype > 0 || outcome.effect.money > 0 || outcome.effect.regret < 0)
+    // 🔊 Play outcome sound, if defined
+    if (outcome.sound) {
+      const soundMap = {
+        "mr-pbh-ooo-wee.mp3": oooWeeSound,
+        "mr-pbh-ha-haa.mp3": haHaaSound,
+        "back-up-terry.mp3": backUpTerrySound,
+        "bricks.mp3": bricksSound,
+      }
 
-    if (event.label === 'Venmo Devin Booker – "Do something"') {
-      playSound(bricksSound, 0.75)
-    }
-
-    if (event.label === 'Heckle Detroit') {
-      try {
-        playSound(backUpTerrySound, 0.75)
-      } catch (e) {
-        console.warn("Couldn't play back-up-terry.mp3:", e)
+      const resolvedSound = soundMap[outcome.sound]
+      if (resolvedSound) {
+        try {
+          playSound(resolvedSound, 0.75)
+        } catch (e) {
+          console.warn("Could not play outcome sound:", outcome.sound, e)
+        }
       }
     }
+
+    let isPositive =
+      (outcome.effect.hype > 0 || outcome.effect.money > 0 || outcome.effect.regret < 0)
 
     if (redFixedLabels.has(event.label)) {
       isPositive = false
@@ -578,7 +579,6 @@ function handleButtonClick(event) {
         }
       }
     }
-
     showMessage(outcome.tagline, isPositive)
   }
 
@@ -682,11 +682,19 @@ function startGame() {
           game.lukaTraded = true
           game.addRegret(20)
           showLukaMessage.value = true
+
+          try {
+            playSound(fireNicoSound, 0.85)
+          } catch (e) {
+            console.warn("Couldn't play fire-nico.mp3:", e)
+          }
+
           showQuarterOver.value = false
           setTimeout(() => {
             showLukaMessage.value = false
           }, 2000)
         }
+
 
         setTimeout(() => {
           showQuarterOver.value = false
