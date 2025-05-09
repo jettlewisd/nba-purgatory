@@ -227,18 +227,27 @@
       <!-- Title stays in pixel font -->
       <h1 class="text-3xl font-bold font-['Press_Start_2P']">Welcome to NBA Purgatory</h1>
 
+      <p class="text-xl md:text-2xl font-serif italic font-semibold text-black tracking-tight leading-snug max-w-3xl mx-auto"
+        style="word-spacing: 0.4em;">
+        You show up. You feel. You take in the spectacle. Then you ask yourself: was it worth losing your mind, your
+        money — and possibly your soul?
+      </p>
+
+
+
       <!-- Rules: larger, bolder, spaced out -->
       <ul class="text-base md:text-lg font-sans font-normal text-gray-800 leading-relaxed space-y-6 max-w-md">
         <li>
-          <strong>1.</strong> <span class="font-bold">Click the floating ball to score.</span><br />
+          <strong>1.</strong> <span class="font-bold">Click the ball to score.</span><br />
           <span class="text-base font-normal">Bonus points if you time it right.</span>
         </li>
         <li>
-          <strong>2.</strong> <span class="font-bold">Keep REGRET low. Keep HYPE high.</span><br />
+          <strong>2.</strong> <span class="font-bold">Click buttons. Keep REGRET low. Keep HYPE high.</span><br />
           <span class="text-base font-normal">Your vibe controls your destiny (and the scoreboard).</span>
         </li>
         <li>
-          <strong>3.</strong> <span class="font-bold">High HYPE = your team scores. Low HYPE = they score.</span><br />
+          <strong>3.</strong> <span class="font-bold">High HYPE = your team scores faster. Low HYPE = they score
+            faster.</span><br />
           <span class="text-base font-normal">Simple math. Chaotic execution.</span>
         </li>
       </ul>
@@ -247,7 +256,7 @@
       <!-- Lower tagline -->
       <p
         class="text-4xl md:text-5xl mt-6 text-center max-w-2xl font-serif text-black italic tracking-tight leading-snug">
-        The sum of your statsheet determines your fate.
+        The sum of your stat sheet determines your fate.
       </p>
 
 
