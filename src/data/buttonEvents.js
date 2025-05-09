@@ -28,7 +28,7 @@ export const buttonEvents = [
             {
                 chance: 0.2,
                 effect: { hype: -5, regret: 5 },
-                tagline: "boos for your whip and boos your nae nae"
+                tagline: "boos for your whip, boos your nae nae"
             }
         ]
     },

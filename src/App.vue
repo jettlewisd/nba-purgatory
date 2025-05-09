@@ -27,7 +27,6 @@
 
 
     <header class="p-4 flex flex-col items-center font-['Press_Start_2P']">
-
       <!-- 🧠 REGRET METER (Flipped Direction, Solid Color Thirds) -->
       <div class="w-[80%] mx-auto mt-4 mb-3 relative">
         <p class="text-center text-sm font-bold mb-1 tracking-widest">REGRET</p>
@@ -44,8 +43,6 @@
             <div v-if="regretFlashColor === 'green'" class="absolute inset-0 shine-overlay"></div>
           </div>
         </div>
-
-
 
         <!-- ▼ Indicator (flipped: more regret = left) -->
         <div
@@ -88,8 +85,6 @@
           </div>
         </div>
 
-
-
         <!-- 🏀 SCORE PILL -->
         <div
           class="bg-purple-300 text-black px-4 py-2 rounded-full border-2 border-black text-sm font-bold text-center">
@@ -103,7 +98,6 @@
         class="-mt-5 bg-purple-300 text-black px-2 py-1.5 rounded-full border-2 border-black text-xs font-bold text-center tracking-tight max-w-fit">
         Q: {{ game.quarter }} | Time: {{ game.time }}s
       </div>
-
     </header>
 
 
@@ -284,6 +278,7 @@ import { playSound } from './utils/sound'
 import bounceSound from './assets/sounds/bounce.mp3'
 import buzzerSound from './assets/sounds/buzzer.mp3'
 import ourBallSound from './assets/sounds/our-ball.mp3'
+import bricksSound from './assets/sounds/bricks.mp3'
 
 // Background + Assets
 import courtBg from './assets/images/court-bg.png'
@@ -375,14 +370,14 @@ function scheduleTurnover() {
 
 
 function scheduleHotHand() {
-  const delay = Math.floor(Math.random() * 20000) + 15000
+  const delay = Math.floor(Math.random() * 15000) + 5000; // fire between 5s–20s into the quarter
 
   setTimeout(() => {
-    // 🛑 don't activate Hot Hand if LeTurnover is active
+    // Don't trigger if LeTurnover is active
     if (!isTurnoverPeriod.value && !isHotHand.value) {
-      activateHotHand()
+      activateHotHand();
     }
-  }, delay)
+  }, delay);
 }
 
 
@@ -548,6 +543,10 @@ function handleButtonClick(event) {
     let isPositive =
       (outcome.effect.hype > 0 || outcome.effect.money > 0 || outcome.effect.regret < 0)
 
+    if (event.label === 'Venmo Devin Booker – "Do something"') {
+      playSound(bricksSound, 0.75)
+    }
+
     if (redFixedLabels.has(event.label)) {
       isPositive = false
     } else if (greenFixedLabels.has(event.label)) {
@@ -640,7 +639,7 @@ function showMessage(tagline, isPositive = false) {
 
 
 function startGame() {
-  game.time = 15
+  game.time = 40
   scheduleTurnover() // ✅ start turnover effect timer
   scheduleHotHand() // ✅ start hot hand effect timer
 
@@ -657,10 +656,11 @@ function startGame() {
     } else {
       if (game.quarter < 4) {
         game.advanceQuarter()
-        game.time = 15
+        game.time = 40
         showQuarterOver.value = true
 
         scheduleTurnover()
+        scheduleHotHand()
 
 
         if (game.quarter === 2 && !beerSequencePlayed.value) {
