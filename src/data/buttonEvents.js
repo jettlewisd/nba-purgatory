@@ -23,13 +23,13 @@ export const buttonEvents = [
         tier: "low",
         outcomes: [
             {
-                chance: 0.8,
+                chance: 0.7,
                 effect: { hype: 5, regret: -5 },
                 tagline: "the crowd loves when you dab",
                 sound: "wow.mp3"
             },
             {
-                chance: 0.2,
+                chance: 0.3,
                 effect: { hype: -5, regret: 5 },
                 tagline: "boos your nae nae",
                 sound: "nae-nae.mp3"

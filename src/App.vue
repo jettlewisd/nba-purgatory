@@ -283,6 +283,23 @@ import backUpTerrySound from './assets/sounds/back-up-terry.mp3'
 import fireNicoSound from './assets/sounds/fire-nico.mp3'
 import haHaaSound from './assets/sounds/mr-pbh-ha-haa.mp3'
 import oooWeeSound from './assets/sounds/mr-pbh-ooo-wee.mp3'
+import wowSound from './assets/sounds/wow.mp3'
+import naeNaeSound from './assets/sounds/naenae.mp3'
+import travisOmgSound from './assets/sounds/travis-omg.mp3'
+import whatDeathnoteSound from './assets/sounds/what-r-u-talm-bout-deathnote.mp3'
+import weFineSound from './assets/sounds/mr-pbh-we-gonna-be-fine.mp3'
+import bruhSound from './assets/sounds/bruh.mp3'
+import heyBabySound from './assets/sounds/beavis-hey-baby.mp3'
+import dallasSound from './assets/sounds/dallas-hank.mp3'
+import sandlerGoodSound from './assets/sounds/i-am-good-sandler.mp3'
+import lightPointlessSound from './assets/sounds/light-whole-thing-pointless.mp3'
+import shot4MeSound from './assets/sounds/shot-4-me.mp3'
+import amenSound from './assets/sounds/mr-pbh-amen-to-that.mp3'
+import sirenSound from './assets/sounds/siren.mp3'
+import squeaksSound from './assets/sounds/squeaks.mp3'
+import endSongSound from './assets/sounds/end-song.mp3'
+
+
 
 // Background + Assets
 import courtBg from './assets/images/court-bg.png'
@@ -332,6 +349,8 @@ const showStartMenu = ref(true)
 const isHotHand = ref(false)
 const showFinalResults = ref(false)
 const resultPhase = ref(0)
+const squeaksAudio = ref(null)
+const endSongAudio = ref(null)
 
 const shownButtonsGlobal = reactive(new Set())
 const beerSequencePlayed = ref(false)
@@ -375,6 +394,7 @@ function scheduleTurnover() {
 
 function activateHotHand() {
   isHotHand.value = true
+  playSound(sirenSound, 0.75)
   setTimeout(() => {
     isHotHand.value = false
   }, 5000)
@@ -543,6 +563,18 @@ function handleButtonClick(event) {
         "mr-pbh-ha-haa.mp3": haHaaSound,
         "back-up-terry.mp3": backUpTerrySound,
         "bricks.mp3": bricksSound,
+        "wow.mp3": wowSound,
+        "naenae.mp3": naeNaeSound,
+        "travis-omg.mp3": travisOmgSound,
+        "what-r-u-talm-bout-deathnote.mp3": whatDeathnoteSound,
+        "we-gonna-be-fine.mp3": weFineSound,
+        "bruh.mp3": bruhSound,
+        "beavis-hey-baby.mp3": heyBabySound,
+        "dallas-hank.mp3": dallasSound,
+        "light-whole-thing-pointless.mp3": lightPointlessSound,
+        "i-am-good-sandler.mp3": sandlerGoodSound,
+        "shot-4-me.mp3": shot4MeSound,
+        "amen-to-that.mp3": amenSound,
       }
 
       const resolvedSound = soundMap[outcome.sound]
@@ -650,6 +682,15 @@ function showMessage(tagline, isPositive = false) {
 
 function startGame() {
   game.time = 40
+
+  // 🎵 Start background squeaks
+  squeaksAudio.value = new Audio(squeaksSound)
+  squeaksAudio.value.loop = true
+  squeaksAudio.value.volume = 0.25
+  squeaksAudio.value.play().catch(() => {
+    console.warn('Autoplay blocked for shoe-squeaks.mp3')
+  })
+
   scheduleTurnover() // ✅ start turnover effect timer
   scheduleHotHand() // ✅ start hot hand effect timer
 
@@ -692,9 +733,8 @@ function startGame() {
           showQuarterOver.value = false
           setTimeout(() => {
             showLukaMessage.value = false
-          }, 2000)
+          }, 4000)
         }
-
 
         setTimeout(() => {
           showQuarterOver.value = false
@@ -706,6 +746,11 @@ function startGame() {
         // ⛔ stop the game loop to freeze scores
         clearInterval(gameInterval)
 
+        if (squeaksAudio.value) {
+          squeaksAudio.value.pause()
+          squeaksAudio.value.currentTime = 0
+        }
+
         setTimeout(() => {
           showGameOver.value = false
           showFinalResults.value = true
@@ -713,6 +758,13 @@ function startGame() {
           // Begin judgment sequence after results screen shows
           setTimeout(() => {
             resultPhase.value = 2
+            // 🔊 Play end-song loop
+            endSongAudio.value = new Audio(endSongSound)
+            endSongAudio.value.loop = true
+            endSongAudio.value.volume = 0.75
+            endSongAudio.value.play().catch(() => {
+              console.warn("Autoplay blocked for end-song.mp3")
+            })
           }, 5000) // show everything after 6 seconds
         }, 2000)
 
@@ -734,6 +786,18 @@ function startGame() {
 
 
 function resetGame() {
+
+  if (squeaksAudio.value) {
+    squeaksAudio.value.pause()
+    squeaksAudio.value.currentTime = 0
+  }
+
+  if (endSongAudio.value) {
+    endSongAudio.value.pause()
+    endSongAudio.value.currentTime = 0
+  }
+
+
   // Reset all game state
   game.hype = 49
   game.regret = 50
