@@ -25,12 +25,14 @@ export const buttonEvents = [
             {
                 chance: 0.8,
                 effect: { hype: 5, regret: -5 },
-                tagline: "the crowd loves when you dab"
+                tagline: "the crowd loves when you dab",
+                sound: "wow.mp3"
             },
             {
                 chance: 0.2,
                 effect: { hype: -5, regret: 5 },
-                tagline: "boos your nae nae"
+                tagline: "boos your nae nae",
+                sound: "nae-nae.mp3"
             }
         ]
     },
@@ -41,12 +43,14 @@ export const buttonEvents = [
             {
                 chance: 0.8,
                 effect: { hype: 5, regret: -5 },
-                tagline: "you made it on ESPN 🤩 (boss knows you skipped work)"
+                tagline: "you made it on ESPN 🤩 (boss knows you skipped work)",
+                sound: "travis-omg.mp3"
             },
             {
                 chance: 0.2,
                 effect: { hype: -5, regret: 5 },
-                tagline: "caught u crying"
+                tagline: "caught u crying",
+                sound: "mr-pbh-ha-haa.mp3"
             }
         ]
     },
@@ -57,12 +61,14 @@ export const buttonEvents = [
             {
                 chance: 0.6,
                 effect: { hype: 10, regret: -10 },
-                tagline: "ignored. probably for the best though."
+                tagline: "ignored. probably for the best though.",
+                sound: "mr-pbh-we-gonna-be-fine.mp3"
             },
             {
                 chance: 0.4,
                 effect: { hype: -10, regret: 10 },
-                tagline: "starters only fam 💀"
+                tagline: "starters only fam 💀",
+                sound: "bruh.mp3"
             }
         ]
     },
@@ -73,12 +79,14 @@ export const buttonEvents = [
             {
                 chance: 0.6,
                 effect: { hype: 10, regret: -10 },
-                tagline: "it’s getting weird but you’re committed."
+                tagline: "it’s getting weird but you’re committed.",
+                sound: "beavis-hey-baby.mp3"
             },
             {
                 chance: 0.4,
                 effect: { hype: -10, regret: 10 },
-                tagline: "you're not their type. maybe next time will be different"
+                tagline: "you're not their type. maybe next time will be different",
+                sound: "mr-pbh-ha-haa.mp3"
             }
         ]
     },
@@ -89,12 +97,14 @@ export const buttonEvents = [
             {
                 chance: 0.35,
                 effect: { hype: 20, regret: -20 },
-                tagline: "never played in your life *sent to wizards* (instant starter)"
+                tagline: "never played in your life. *sent to Mavs* (instant starter)",
+                sound: "dallas-hank.mp3"
             },
             {
                 chance: 0.65,
                 effect: { hype: -20, regret: 20 },
-                tagline: "tryouts were yesterday"
+                tagline: "tryouts were yesterday",
+                sound: "i-am-good-sandler.mp3"
             }
         ]
     },
@@ -105,12 +115,14 @@ export const buttonEvents = [
             {
                 chance: 0.35,
                 effect: { hype: 20, regret: -20 },
-                tagline: "congrats on getting THE Trendon Watford's signature!😆"
+                tagline: "congrats on getting THE Trendon Watford's signature!😆",
+                sound: "what-r-u-talm-bout-deathnote.mp3"
             },
             {
                 chance: 0.65,
                 effect: { hype: -20, regret: 20 },
-                tagline: "congrats on getting THE Trendon Watford's signature!💀"
+                tagline: "congrats on getting THE Trendon Watford's signature!💀",
+                sound: "what-r-u-talm-bout-deathnote.mp3"
             }
         ]
     },
@@ -121,12 +133,14 @@ export const buttonEvents = [
             {
                 chance: 0.2,
                 effect: { money: 50, hype: 35, regret: -30 },
-                tagline: "unbelievable luck. your mortgage is safe"
+                tagline: "unbelievable luck. your mortgage is safe",
+                sound: "mr-pbh-ooo-wee.mp3"
             },
             {
                 chance: 0.8,
                 effect: { money: -50, hype: -35, regret: 30 },
-                tagline: "rip to your kid’s tuition"
+                tagline: "rip to your kid’s tuition",
+                sound: "light-whole-thing-pointless.mp3"
             }
         ]
     },
@@ -137,12 +151,14 @@ export const buttonEvents = [
             {
                 chance: 0.2,
                 effect: { hype: 30, regret: -30 },
-                tagline: "you got a selfie with Mr. Clippy!... 🫦🫦"
+                tagline: "you got a selfie with Mr. Clippy!... 🫦🫦",
+                sound: "travis-omg.mp3"
             },
             {
                 chance: 0.8,
                 effect: { hype: -30, regret: 30 },
-                tagline: "Friedland snitched! 😐 sent back to the nosebleeds via t-shirt cannon"
+                tagline: "Friedland snitched! 😐 sent back to the nosebleeds via t-shirt cannon",
+                sound: "what-r-u-talm-bout-deathnote.mp3"
             }
         ]
     },
@@ -153,7 +169,8 @@ export const buttonEvents = [
             {
                 chance: 1.0,
                 effect: { hype: 5, regret: -5 },
-                tagline: "he winked back 🫦"
+                tagline: "he winked back 🫦",
+                sound: "shot-4-me.mp3"
             }
         ]
     },
@@ -164,7 +181,8 @@ export const buttonEvents = [
             {
                 chance: 1.0,
                 effect: { hype: 3, regret: -3 },
-                tagline: "LAKERS score!"
+                tagline: "LAKERS score!",
+                sound: "mr-pbh-amen-to-that.mp3"
             }
         ]
     },
@@ -175,7 +193,8 @@ export const buttonEvents = [
             {
                 chance: 1.0,
                 effect: { money: -10, hype: 3, regret: 2 },
-                tagline: "yum! *drops them*"
+                tagline: "yum! *drops them*",
+                sound: "bruh.mp3"
             }
         ]
     },
@@ -210,7 +229,8 @@ export const buttonEvents = [
             {
                 chance: 1.0,
                 effect: { money: 1, hype: 10, regret: 10 },
-                tagline: "it's XS but whatev"
+                tagline: "it's XS but whatev",
+                sound: "mr-pbh-ooo-wee.mp3"
             }
         ]
     },
@@ -221,7 +241,8 @@ export const buttonEvents = [
             {
                 chance: 1.0,
                 effect: { money: 1, hype: -10, regret: 5 },
-                tagline: "all you got was a Gobert jersey :/"
+                tagline: "all you got was a Gobert jersey :/",
+                sound: "light-whole-thing-pointless.mp3"
             }
         ]
     },
