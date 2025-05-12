@@ -287,18 +287,24 @@ import wowSound from './assets/sounds/wow.mp3'
 import naeNaeSound from './assets/sounds/naenae.mp3'
 import travisOmgSound from './assets/sounds/travis-omg.mp3'
 import whatDeathnoteSound from './assets/sounds/what-r-u-talm-bout-deathnote.mp3'
-import weFineSound from './assets/sounds/mr-pbh-we-gonna-be-fine.mp3'
+import weFineSound from './assets/sounds/we-gonna-be-fine.mp3'
 import bruhSound from './assets/sounds/bruh.mp3'
 import heyBabySound from './assets/sounds/beavis-hey-baby.mp3'
 import dallasSound from './assets/sounds/dallas-hank.mp3'
 import sandlerGoodSound from './assets/sounds/i-am-good-sandler.mp3'
 import lightPointlessSound from './assets/sounds/light-whole-thing-pointless.mp3'
 import shot4MeSound from './assets/sounds/shot-4-me.mp3'
-import amenSound from './assets/sounds/mr-pbh-amen-to-that.mp3'
+import amenSound from './assets/sounds/amen-to-that.mp3'
 import sirenSound from './assets/sounds/siren.mp3'
 import squeaksSound from './assets/sounds/squeaks.mp3'
 import endSongSound from './assets/sounds/end-song.mp3'
-
+import beavisBeerSound from './assets/sounds/beavis-beer.mp3'
+import bojackBeerSound from './assets/sounds/bojack-beer.mp3'
+import hankBeerSound from './assets/sounds/hank-beer.mp3'
+import cashMeSound from './assets/sounds/cash-me.mp3'
+import zzzzzSound from './assets/sounds/Zzzzz.mp3'
+import bojackSoberSound from './assets/sounds/bojack-sober.mp3'
+import gobertSound from './assets/sounds/gobert.mp3'
 
 
 // Background + Assets
@@ -575,6 +581,7 @@ function handleButtonClick(event) {
         "i-am-good-sandler.mp3": sandlerGoodSound,
         "shot-4-me.mp3": shot4MeSound,
         "amen-to-that.mp3": amenSound,
+        "gobert.mp3": gobertSound,
       }
 
       const resolvedSound = soundMap[outcome.sound]
@@ -614,13 +621,41 @@ function handleButtonClick(event) {
     showMessage(outcome.tagline, isPositive)
   }
 
-  if (event.label.includes("Beer") && typeof window.__spawnNextBeer === 'function') {
-    window.__spawnNextBeer()
+  // 🍺 Custom beer sound by level or outcome
+  if (event.label.includes("Beer")) {
+    const level = event.beerLevelRequired
+
+    switch (level) {
+      case 0:
+        playSound(beavisBeerSound, 0.85)
+        break
+      case 1:
+        playSound(bojackBeerSound, 0.85)
+        break
+      case 2:
+        playSound(hankBeerSound, 0.85)
+        break
+      case 3:
+        playSound(cashMeSound, 0.85)
+        break
+      case 4:
+        if (outcome?.tagline === "ZZzzzzzzzz") {
+          playSound(zzzzzSound, 0.85)
+        } else if (outcome?.tagline === "phone = lost") {
+          playSound(bojackSoberSound, 0.85)
+        }
+        break
+    }
   }
 
   if (event.beerLevelRequired !== undefined) {
     game.unlockNextBeer()
   }
+
+  if (event.label.includes("Beer") && typeof window.__spawnNextBeer === 'function') {
+    window.__spawnNextBeer()
+  }
+
   activeButtons.value = activeButtons.value.filter(btn => btn.id !== event.id)
 }
 

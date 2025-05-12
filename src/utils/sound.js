@@ -7,3 +7,19 @@ export function playSound(src, volume = 1.0) {
         })
     }, 0)
 }
+
+export function fadeOutSound(audio, duration = 1000) {
+    const step = 50
+    const volumeStep = audio.volume / (duration / step)
+
+    const fade = setInterval(() => {
+        if (audio.volume > volumeStep) {
+            audio.volume = Math.max(0, audio.volume - volumeStep)
+        } else {
+            audio.volume = 0
+            audio.pause()
+            clearInterval(fade)
+        }
+    }, step)
+}
+

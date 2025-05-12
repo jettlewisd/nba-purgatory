@@ -32,7 +32,7 @@ export const buttonEvents = [
                 chance: 0.3,
                 effect: { hype: -5, regret: 5 },
                 tagline: "boos your nae nae",
-                sound: "nae-nae.mp3"
+                sound: "naenae.mp3"
             }
         ]
     },
@@ -62,7 +62,7 @@ export const buttonEvents = [
                 chance: 0.6,
                 effect: { hype: 10, regret: -10 },
                 tagline: "ignored. probably for the best though.",
-                sound: "mr-pbh-we-gonna-be-fine.mp3"
+                sound: "we-gonna-be-fine.mp3"
             },
             {
                 chance: 0.4,
@@ -182,7 +182,7 @@ export const buttonEvents = [
                 chance: 1.0,
                 effect: { hype: 3, regret: -3 },
                 tagline: "LAKERS score!",
-                sound: "mr-pbh-amen-to-that.mp3"
+                sound: "amen-to-that.mp3"
             }
         ]
     },
@@ -242,7 +242,7 @@ export const buttonEvents = [
                 chance: 1.0,
                 effect: { money: 1, hype: -10, regret: 5 },
                 tagline: "all you got was a Gobert jersey :/",
-                sound: "light-whole-thing-pointless.mp3"
+                sound: "gobert.mp3"
             }
         ]
     },
