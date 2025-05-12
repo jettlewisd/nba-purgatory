@@ -31,7 +31,7 @@ export const buttonEvents = [
             {
                 chance: 0.3,
                 effect: { hype: -5, regret: 5 },
-                tagline: "boos your nae nae",
+                tagline: "boos 4 your nae nae",
                 sound: "naenae.mp3"
             }
         ]
@@ -86,7 +86,7 @@ export const buttonEvents = [
                 chance: 0.4,
                 effect: { hype: -10, regret: 10 },
                 tagline: "you're not their type. maybe next time will be different",
-                sound: "mr-pbh-ha-haa.mp3"
+                sound: "sad-song.mp3"
             }
         ]
     },
@@ -158,7 +158,7 @@ export const buttonEvents = [
                 chance: 0.8,
                 effect: { hype: -30, regret: 30 },
                 tagline: "Friedland snitched! 😐 sent back to the nosebleeds via t-shirt cannon",
-                sound: "what-r-u-talm-bout-deathnote.mp3"
+                sound: "wth.mp3"
             }
         ]
     },

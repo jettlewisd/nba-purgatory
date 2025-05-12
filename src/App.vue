@@ -305,6 +305,7 @@ import cashMeSound from './assets/sounds/cash-me.mp3'
 import zzzzzSound from './assets/sounds/Zzzzz.mp3'
 import bojackSoberSound from './assets/sounds/bojack-sober.mp3'
 import gobertSound from './assets/sounds/gobert.mp3'
+import arenaClapsSound from './assets/sounds/arena-claps.mp3'
 
 
 // Background + Assets
@@ -338,6 +339,8 @@ import gosling from './assets/images/courtside/gosling.png'
 import trav from './assets/images/courtside/trav.png'
 import bey from './assets/images/courtside/bey.png'
 import buggy from './assets/images/courtside/buggy.png'
+import wthSound from './assets/sounds/wth.mp3'
+import sadSongSound from './assets/sounds/sad-song.mp3'
 
 const game = useGameStore()
 const activeButtons = ref([])
@@ -357,6 +360,7 @@ const showFinalResults = ref(false)
 const resultPhase = ref(0)
 const squeaksAudio = ref(null)
 const endSongAudio = ref(null)
+const arenaClapsAudio = ref(null)
 
 const shownButtonsGlobal = reactive(new Set())
 const beerSequencePlayed = ref(false)
@@ -382,11 +386,12 @@ const players = [
 
 function activateTurnover() {
   isTurnoverPeriod.value = true
-  playSound(ourBallSound, 0.95)
+  playSound(ourBallSound, 1.0)
   setTimeout(() => {
     isTurnoverPeriod.value = false
   }, 5000)
 }
+
 
 function scheduleTurnover() {
   const delay = Math.floor(Math.random() * 20000) + 10000
@@ -400,11 +405,12 @@ function scheduleTurnover() {
 
 function activateHotHand() {
   isHotHand.value = true
-  playSound(sirenSound, 0.4)
+  playSound(sirenSound, 0.2)
   setTimeout(() => {
     isHotHand.value = false
   }, 5000)
 }
+
 
 function scheduleHotHand() {
   const delay = Math.floor(Math.random() * 15000) + 5000; // fire between 5s–20s into the quarter
@@ -582,26 +588,30 @@ function handleButtonClick(event) {
         "shot-4-me.mp3": shot4MeSound,
         "amen-to-that.mp3": amenSound,
         "gobert.mp3": gobertSound,
+        "wth.mp3": wthSound,
+        "sad-song.mp3": sadSongSound,
       }
 
       const soundVolumes = {
-        "mr-pbh-ooo-wee.mp3": 0.9,
-        "mr-pbh-ha-haa.mp3": 0.8,
-        "back-up-terry.mp3": .6,
+        "mr-pbh-ooo-wee.mp3": 0.4,
+        "mr-pbh-ha-haa.mp3": 0.4,
+        "back-up-terry.mp3": .4,
         "bricks.mp3": 1.0,
         "wow.mp3": 0.8,
-        "naenae.mp3": 0.6,
+        "naenae.mp3": 0.4,
         "travis-omg.mp3": 1.0,
-        "what-r-u-talm-bout-deathnote.mp3": 0.4,
-        "we-gonna-be-fine.mp3": 0.65,
+        "what-r-u-talm-bout-deathnote.mp3": 0.2,
+        "we-gonna-be-fine.mp3": 0.4,
         "bruh.mp3": 0.8,
-        "beavis-hey-baby.mp3": 0.9,
-        "dallas-hank.mp3": 0.95,
-        "light-whole-thing-pointless.mp3": 0.1,
+        "beavis-hey-baby.mp3": 0.95,
+        "dallas-hank.mp3": 0.8,
+        "light-whole-thing-pointless.mp3": 0.3,
         "i-am-good-sandler.mp3": 0.5,
         "shot-4-me.mp3": 0.5,
-        "amen-to-that.mp3": 0.7,
-        "gobert.mp3": 0.5,
+        "amen-to-that.mp3": 0.6,
+        "gobert.mp3": 0.25,
+        "wth.mp3": 0.5,
+        "sad-song.mp3": 0.5,
       }
 
       const resolvedSound = soundMap[outcome.sound]
@@ -660,22 +670,22 @@ function handleButtonClick(event) {
 
     switch (level) {
       case 0:
-        playSound(beavisBeerSound, 0.85)
+        playSound(beavisBeerSound, 0.7)
         break
       case 1:
-        playSound(bojackBeerSound, 0.85)
+        playSound(bojackBeerSound, 0.8)
         break
       case 2:
-        playSound(hankBeerSound, 0.85)
+        playSound(hankBeerSound, 0.8)
         break
       case 3:
-        playSound(cashMeSound, 0.85)
+        playSound(cashMeSound, 0.6)
         break
       case 4:
         if (outcome?.tagline === "ZZzzzzzzzz") {
           playSound(zzzzzSound, 0.85)
         } else if (outcome?.tagline === "phone = lost") {
-          playSound(bojackSoberSound, 0.85)
+          playSound(bojackSoberSound, 0.95)
         }
         break
     }
@@ -754,9 +764,16 @@ function startGame() {
   // 🎵 Start background squeaks
   squeaksAudio.value = new Audio(squeaksSound)
   squeaksAudio.value.loop = true
-  squeaksAudio.value.volume = 0.25
+  squeaksAudio.value.volume = 0.2
   squeaksAudio.value.play().catch(() => {
     console.warn('Autoplay blocked for shoe-squeaks.mp3')
+  })
+
+  arenaClapsAudio.value = new Audio(arenaClapsSound)
+  arenaClapsAudio.value.loop = true
+  arenaClapsAudio.value.volume = 0.05
+  arenaClapsAudio.value.play().catch(() => {
+    console.warn('Autoplay blocked for arena-claps.mp3')
   })
 
   scheduleTurnover() // ✅ start turnover effect timer
@@ -793,7 +810,7 @@ function startGame() {
           showLukaMessage.value = true
 
           try {
-            playSound(fireNicoSound, 0.85)
+            playSound(fireNicoSound, 0.75)
           } catch (e) {
             console.warn("Couldn't play fire-nico.mp3:", e)
           }
@@ -858,6 +875,11 @@ function resetGame() {
   if (squeaksAudio.value) {
     squeaksAudio.value.pause()
     squeaksAudio.value.currentTime = 0
+  }
+
+  if (arenaClapsAudio.value) {
+    arenaClapsAudio.value.pause()
+    arenaClapsAudio.value.currentTime = 0
   }
 
   if (endSongAudio.value) {
