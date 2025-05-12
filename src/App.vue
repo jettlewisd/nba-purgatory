@@ -274,7 +274,7 @@ import { useGameStore } from './stores/game'
 import { buttonEvents } from './data/buttonEvents'
 
 // Sounds
-import { playSound } from './utils/sound'
+import { playSound, fadeOutSound } from './utils/sound'
 import bounceSound from './assets/sounds/bounce.mp3'
 import buzzerSound from './assets/sounds/buzzer.mp3'
 import ourBallSound from './assets/sounds/our-ball.mp3'
@@ -587,11 +587,27 @@ function handleButtonClick(event) {
       const resolvedSound = soundMap[outcome.sound]
       if (resolvedSound) {
         try {
-          playSound(resolvedSound, 0.75)
+          if (event.label === "Shoplift from the Team Shop") {
+            const audio = new Audio(resolvedSound)
+            audio.volume = 0.75
+            audio.play().catch(() => {
+              // autoplay block is fine
+            })
+            setTimeout(() => {
+              fadeOutSound(audio, 4000) // faster fade
+            }, 5000)
+
+              .catch(() => {
+                // fine if autoplay blocked
+              })
+          } else {
+            playSound(resolvedSound, 0.75)
+          }
         } catch (e) {
           console.warn("Could not play outcome sound:", outcome.sound, e)
         }
       }
+
     }
 
     let isPositive =
