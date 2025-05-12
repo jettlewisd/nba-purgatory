@@ -382,7 +382,7 @@ const players = [
 
 function activateTurnover() {
   isTurnoverPeriod.value = true
-  playSound(ourBallSound, 0.8)
+  playSound(ourBallSound, 0.95)
   setTimeout(() => {
     isTurnoverPeriod.value = false
   }, 5000)
@@ -400,7 +400,7 @@ function scheduleTurnover() {
 
 function activateHotHand() {
   isHotHand.value = true
-  playSound(sirenSound, 0.75)
+  playSound(sirenSound, 0.4)
   setTimeout(() => {
     isHotHand.value = false
   }, 5000)
@@ -584,30 +584,47 @@ function handleButtonClick(event) {
         "gobert.mp3": gobertSound,
       }
 
+      const soundVolumes = {
+        "mr-pbh-ooo-wee.mp3": 0.9,
+        "mr-pbh-ha-haa.mp3": 0.8,
+        "back-up-terry.mp3": .6,
+        "bricks.mp3": 1.0,
+        "wow.mp3": 0.8,
+        "naenae.mp3": 0.6,
+        "travis-omg.mp3": 1.0,
+        "what-r-u-talm-bout-deathnote.mp3": 0.4,
+        "we-gonna-be-fine.mp3": 0.65,
+        "bruh.mp3": 0.8,
+        "beavis-hey-baby.mp3": 0.9,
+        "dallas-hank.mp3": 0.95,
+        "light-whole-thing-pointless.mp3": 0.1,
+        "i-am-good-sandler.mp3": 0.5,
+        "shot-4-me.mp3": 0.5,
+        "amen-to-that.mp3": 0.7,
+        "gobert.mp3": 0.5,
+      }
+
       const resolvedSound = soundMap[outcome.sound]
+      const volume = soundVolumes[outcome.sound] ?? 0.75
+
       if (resolvedSound) {
         try {
           if (event.label === "Shoplift from the Team Shop") {
             const audio = new Audio(resolvedSound)
-            audio.volume = 0.75
+            audio.volume = volume
             audio.play().catch(() => {
               // autoplay block is fine
             })
             setTimeout(() => {
-              fadeOutSound(audio, 4000) // faster fade
+              fadeOutSound(audio, 4000)
             }, 5000)
-
-              .catch(() => {
-                // fine if autoplay blocked
-              })
           } else {
-            playSound(resolvedSound, 0.75)
+            playSound(resolvedSound, volume)
           }
         } catch (e) {
           console.warn("Could not play outcome sound:", outcome.sound, e)
         }
       }
-
     }
 
     let isPositive =
