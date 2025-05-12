@@ -22,4 +22,3 @@ export function fadeOutSound(audio, duration = 1000) {
         }
     }, step)
 }
-
