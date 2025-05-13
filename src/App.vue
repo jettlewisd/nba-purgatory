@@ -237,7 +237,8 @@
           <span class="text-base font-normal">Bonus points if you time it right.</span>
         </li>
         <li>
-          <strong>2.</strong> <span class="font-bold">Click buttons. Keep REGRET low. Keep HYPE high.</span><br />
+          <strong>2.</strong> <span class="font-bold">Click the pink buttons. Keep REGRET low. Keep HYPE
+            high.</span><br />
           <span class="text-base font-normal">Your vibe controls your destiny (and the scoreboard).</span>
         </li>
         <li>
