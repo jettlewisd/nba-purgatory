@@ -1002,7 +1002,7 @@ function resetGame() {
 }
 
 .animate-bounce-dvd {
-  animation: bounce-chaotic 41s linear infinite;
+  animation: bounce-chaotic 53s linear infinite;
   position: absolute;
 }
 
