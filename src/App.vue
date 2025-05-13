@@ -611,7 +611,7 @@ function handleButtonClick(event) {
         "i-am-good-sandler.mp3": 0.5,
         "shot-4-me.mp3": 0.5,
         "amen-to-that.mp3": 0.6,
-        "gobert.mp3": 0.25,
+        "gobert.mp3": 0.45,
         "wth.mp3": 0.5,
         "sad-song.mp3": 0.5,
       }
