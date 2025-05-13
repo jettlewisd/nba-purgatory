@@ -31,18 +31,19 @@
       <div class="w-[80%] mx-auto mt-4 mb-3 relative">
         <p class="text-center text-sm font-bold mb-1 tracking-widest">REGRET</p>
 
-        <!-- Regret Meter (Red vs Green with Flashing Overlay) -->
+        <!-- Regret Meter -->
         <div class="w-full h-6 rounded-full overflow-hidden flex border-2 border-black relative">
           <!-- Red Half -->
-          <div class="w-1/2 bg-red-600 relative">
+          <div class="w-1/2 relative" style="background: linear-gradient(to right, #7f1d1d, #dc2626, #f87171);">
             <div v-if="regretFlashColor === 'red'" class="absolute inset-0 shine-overlay"></div>
           </div>
 
           <!-- Green Half -->
-          <div class="w-1/2 bg-green-600 relative">
+          <div class="w-1/2 relative" style="background: linear-gradient(to left, #065f46, #10b981, #6ee7b7);">
             <div v-if="regretFlashColor === 'green'" class="absolute inset-0 shine-overlay"></div>
           </div>
         </div>
+
 
         <!-- ▼ Indicator (flipped: more regret = left) -->
         <div
@@ -67,12 +68,12 @@
           <!-- Hype Meter (Red vs Green with Overlay Flashing) -->
           <div class="w-full h-4 rounded-full overflow-hidden flex border-2 border-black relative">
             <!-- Red Half -->
-            <div class="w-1/2 bg-red-600 relative">
+            <div class="w-1/2 relative" style="background: linear-gradient(to right, #7f1d1d, #dc2626, #f87171);">
               <div v-if="hypeFlashColor === 'red'" class="absolute inset-0 shine-overlay"></div>
             </div>
 
             <!-- Green Half -->
-            <div class="w-1/2 bg-green-600 relative">
+            <div class="w-1/2 relative" style="background: linear-gradient(to left, #065f46, #10b981, #6ee7b7);">
               <div v-if="hypeFlashColor === 'green'" class="absolute inset-0 shine-overlay"></div>
             </div>
 
