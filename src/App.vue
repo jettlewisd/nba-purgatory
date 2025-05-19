@@ -813,6 +813,7 @@ function resetGame() {
 /* ========== GLOBAL RULES ========== */
 
 /* Prevent dragging images/text in the component */
+
 * {
   -webkit-user-drag: none;
   user-drag: none;
