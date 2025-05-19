@@ -205,7 +205,7 @@
         </li>
         <li>
           <strong>2.</strong> <span class="font-bold">Click the pink buttons. Keep REGRET low, keep HYPE
-            high. Kizmet is random in this arena.</span><br />
+            high. Kismet is random in this arena.</span><br />
           <span class="text-base font-normal">Your vibe controls your destiny (and the scoreboard).</span>
         </li>
         <li>
